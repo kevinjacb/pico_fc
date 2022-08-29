@@ -5,6 +5,7 @@
 #include <SPI.h>
 #include <Adafruit_ST7735.h>
 #include <Adafruit_GFX.h>
+#include "gui.h"
 
 #define I2C_SDA 0
 #define I2C_SCL 1
@@ -38,10 +39,16 @@ yaw_p, yaw_d, yaw_i = 0;
 int pid_pitch, pid_roll, pid_yaw;
 int addr = 0;
 
+String items[] = {"IMU Calibration","GPS Calibration","ESC Calibration","PID tuning","Receiver test","Trimming"};
+int item_count = 6;
+
+String init_screen = "Hazardouz";
+
 MPU9250 mpu;
 MPU9250Setting setting;
 Servo output[4];
 Adafruit_ST7735 tft = Adafruit_ST7735(CS,A0,MOSI,SCLK,RESET);
+GUI tftHelper = GUI(&tft);
 
 void setup() {
   // put your setup code here, to run once:
@@ -95,14 +102,14 @@ void setup1(){
   for(int i : button_pin)
     pinMode(i,INPUT_PULLUP);
     
-  tft.initR(INITR_BLACKTAB);
-  tft.fillScreen(ST77XX_BLUE); //Change  to black
-  initScreen();
-
   attachInterrupt(digitalPinToInterrupt(button_pin[0]),pin1,FALLING);
   attachInterrupt(digitalPinToInterrupt(button_pin[1]),pin2,FALLING);
   attachInterrupt(digitalPinToInterrupt(button_pin[2]),pin3,FALLING);
   attachInterrupt(digitalPinToInterrupt(button_pin[3]),pin4,FALLING);
+  tftHelper.displayInfo(init_screen,2,tw/7,th/3,ST77XX_BLUE,ST77XX_ORANGE);
+  delay(1000);
+  tft.fillScreen(ST77XX_BLACK);
+  tftHelper.createMenu(items,item_count);
 }
 
 byte dlay = 10; // in millis
@@ -128,6 +135,7 @@ void loop() {
  * currently uses the second core for reading pwm
  * without blocking the main loop
  */
+int curr_menu_item = -1; //Stores the current menu item selected
 void loop1(){
   for(int i = 0; i < 4; i++)
     channel_in[i] = pulseIn(receiver_pin[i],HIGH);
@@ -219,28 +227,17 @@ void calibrateRC(){
   // TODO
 }
 
-void initScreen(){
-  tft.setTextSize(2);
-  tft.setTextColor(ST77XX_WHITE);
-  tft.setCursor(tw/9,th/2);
-  tft.print("HAZARDOUZ");
-}
+//void initScreen(){
+//  //TODO
+//}
 
-byte c_menu = -1;
-void menu(){
-  String data = "
-  //TODO
-}
-
-void setHightlight(){
-  
-}
 
 void updateScreen(){
   //TODO
 }
 bool switch_color = false;
 
+long prev_switch_interrupt = micros(); // variable to keep track of the last time switch was pressed
 void pin1(){
   ISR(0);
 }
@@ -256,17 +253,25 @@ void pin3(){
 void pin4(){
   ISR(3);
 }
-void ISR(byte pin){   //TODO
-  if(switch_color){
-    tft.fillScreen(ST77XX_BLACK);
-    tft.setTextColor(ST77XX_WHITE);  
-    switch_color = false;
+void ISR(byte pin){ 
+  int prev_item = curr_menu_item;
+  if(micros() - prev_switch_interrupt < 10000)
+    return;
+  bool up = false;
+  switch(pin){
+    case 0:
+      if(curr_menu_item <= 0){
+        curr_menu_item = item_count-1;
+        prev_item = 0;
+        up = true;
+      }
+      else
+        curr_menu_item--;
+      break;
+    case 1:
+      curr_menu_item = (curr_menu_item+1)%item_count;
+      break;
   }
-  else {
-    tft.fillScreen(ST77XX_WHITE);
-    tft.setTextColor(ST77XX_BLACK);
-    switch_color = true;
-  }
-  tft.setCursor(tw/8,th/2);
-  tft.printf("BUTTON %d PRESSED!",pin+1);
+  tftHelper.highlightItem(items,curr_menu_item,prev_item,item_count);
+  prev_switch_interrupt = micros();
 }
