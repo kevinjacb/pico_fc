@@ -39,6 +39,7 @@ yaw_p, yaw_d, yaw_i = 0;
 int pid_pitch, pid_roll, pid_yaw;
 int addr = 0;
 
+
 String items[] = {"IMU Calibration","GPS Calibration","ESC Calibration","PID tuning","Receiver test","Trimming"};
 int item_count = 6;
 
@@ -109,7 +110,7 @@ void setup1(){
   tftHelper.displayInfo(init_screen,2,tw/7,th/3,ST77XX_BLUE,ST77XX_ORANGE);
   delay(1000);
   tft.fillScreen(ST77XX_BLACK);
-  tftHelper.createMenu(items,item_count);
+  tftHelper.createMenu("MENU",items,item_count);
 }
 
 byte dlay = 10; // in millis
@@ -267,11 +268,17 @@ void ISR(byte pin){
       }
       else
         curr_menu_item--;
+      tftHelper.highlightItem(items,curr_menu_item,prev_item,item_count);
       break;
+      
     case 1:
       curr_menu_item = (curr_menu_item+1)%item_count;
+      tftHelper.highlightItem(items,curr_menu_item,prev_item,item_count);
+      break;
+      
+    case 2:
+      tftHelper.selectItem(curr_menu_item);
       break;
   }
-  tftHelper.highlightItem(items,curr_menu_item,prev_item,item_count);
   prev_switch_interrupt = micros();
 }

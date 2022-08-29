@@ -22,10 +22,42 @@ void GUI::displayInfo(String data, int text_size,int x, int y, int16_t color,int
 }
 
 
-int GUI::createMenu(String items[],int count){
-  GUI::displayInfo("MENU",2,tw/3,10,ST77XX_YELLOW);
+int GUI::createMenu(String title, String items[],int count){
+  tft -> drawRect(0,0,tw,th,ST77XX_ORANGE);
+  GUI::displayInfo(title,2,tw/3,8,ST77XX_YELLOW);
+  tft -> drawLine(0,init_y-8,tw,init_y-8,ST77XX_YELLOW);
   for(int i = 0,y_offset = 0; i < count; i++,y_offset += incr_y)
     GUI::displayInfo("-> "+items[i],1,tw/10,init_y+y_offset,ST77XX_CYAN);
+  return 1;
+}
+
+int IMUScreen(){
+  //TODO
+  return 1;
+}
+
+int GPSScreen(){
+  //TODO
+  return 1;
+}
+
+int ESCScreen(){
+  //TODO
+  return 1;
+}
+
+int PIDScreen(){
+  //TODO
+  return 1;
+}
+
+int RecieverScreen(){
+  //TODO
+  return 1;
+}
+
+int TrimmingScreen(){
+  //TODO
   return 1;
 }
 
