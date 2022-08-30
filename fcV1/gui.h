@@ -13,7 +13,8 @@ class GUI{
   public:
     GUI(Adafruit_ST7735 *tft);
     void displayInfo(String data, int text_size = 1, int x = -1, int y = -1, int16_t color = ST77XX_WHITE, int16_t bg = ST77XX_BLACK, bool clr=false, bool shift = true);
-    int createMenu(String title, String items[],int count);
+    int createMenu(String title, String items[],int count,String prefix = "-> ");
+    int createHorizontalWidgets(String items[],int y,int count, String prefix = "-> ");
     int IMUScreen();
     int GPSScreen();
     int ESCScreen();
