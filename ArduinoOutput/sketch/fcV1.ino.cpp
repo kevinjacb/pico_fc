@@ -1,3 +1,4 @@
+#line 1 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
 #include <Arduino.h>
 #include "MPU9250.h"
 #include <Wire.h>
@@ -50,6 +51,39 @@ Adafruit_ST7735 tft = Adafruit_ST7735(CS, A0, MOSI, SCLK, RESET);
 GUI tftHelper = GUI(&tft);
 VAR variables = VAR();
 
+#line 53 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void setup();
+#line 102 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void setup1();
+#line 123 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void loop();
+#line 154 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void loop1();
+#line 168 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void pidTuner();
+#line 189 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void printOutput();
+#line 200 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void readTXAngles();
+#line 210 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void calcPid();
+#line 248 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void setMotorSpeed();
+#line 257 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void calibrateRC();
+#line 266 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void updateScreen();
+#line 273 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void pin1();
+#line 278 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void pin2();
+#line 283 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void pin3();
+#line 288 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void pin4();
+#line 292 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+void ISR(byte pin);
+#line 53 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
 void setup()
 {
   // put your setup code here, to run once:
@@ -162,7 +196,7 @@ void loop1()
       tftHelper.updateIMU(pitch, roll, yaw);
       break;
     }
-  // Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
+  Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
 }
 
 void pidTuner()
@@ -359,3 +393,4 @@ void ISR(byte pin)
   }
   prev_switch_interrupt = micros();
 }
+

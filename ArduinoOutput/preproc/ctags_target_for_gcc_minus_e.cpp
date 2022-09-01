@@ -1,27 +1,17 @@
-#include <Arduino.h>
-#include "MPU9250.h"
-#include <Wire.h>
-#include <Servo.h>
-#include <EEPROM.h>
-#include <SPI.h>
-#include <Adafruit_ST7735.h>
-#include <Adafruit_GFX.h>
-#include "gui.h"
-#include "variables.h"
+# 1 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
+# 2 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
+# 3 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
 
-#define I2C_SDA 0
-#define I2C_SCL 1
-#define ADDR 0x68
-#define DEF_VAL 110
-#define SCLK 2
-#define MOSI 3
-#define CS 4
-#define RESET 5
-#define A0 6
+# 5 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
+# 6 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
+# 7 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
+# 8 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
 
+# 10 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino" 2
+# 22 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
 const int motor_pin[] = {19, 18, 17, 16};
 const int receiver_pin[] = {12, 13, 11, 10, 14}; // rudder,throttle,elevator,aileron
-const int button_pin[] = {7, 8, 9, 20};          // 4th button is disconnected currently
+const int button_pin[] = {7, 8, 9, 20}; // 4th button is disconnected currently
 const byte tw = 160, th = 128;
 
 byte button_stat[] = {0, 0, 0, 0};
@@ -46,43 +36,43 @@ String init_screen = "Hazardouz";
 MPU9250 mpu;
 MPU9250Setting setting;
 Servo output[4];
-Adafruit_ST7735 tft = Adafruit_ST7735(CS, A0, MOSI, SCLK, RESET);
+Adafruit_ST7735 tft = Adafruit_ST7735(4, 6, 3, 2, 5);
 GUI tftHelper = GUI(&tft);
 VAR variables = VAR();
 
 void setup()
 {
   // put your setup code here, to run once:
-  pinMode(LED_BUILTIN, OUTPUT);
-  analogWrite(LED_BUILTIN, DEF_VAL);
+  pinMode((25u), OUTPUT);
+  analogWrite((25u), 110);
   for (int i = 0; i < 4; i++)
   {
     output[i].attach(motor_pin[i]);
     output[i].writeMicroseconds(1000);
   }
 
-  Wire.setSDA(I2C_SDA);
-  Wire.setSCL(I2C_SCL);
+  Wire.setSDA(0);
+  Wire.setSCL(1);
   Wire.setClock(400000);
   Wire.begin();
 
   Serial.begin(115200);
   EEPROM.begin(1024);
   Serial.println("Initializing mpu");
-  while (!mpu.setup(ADDR, setting))
+  while (!mpu.setup(0x68, setting))
     ;
 
   Serial.println("IMU Calibration begins in 2 secs. Do not move");
   delay(2000);
-  analogWrite(LED_BUILTIN, 255);
+  analogWrite((25u), 255);
   mpu.calibrateAccelGyro();
-  analogWrite(LED_BUILTIN, DEF_VAL);
+  analogWrite((25u), 110);
 
   Serial.println("Mag calibration begins in 2 secs. Move in 8 till done");
   delay(2000);
-  analogWrite(LED_BUILTIN, 255);
+  analogWrite((25u), 255);
   mpu.calibrateMag();
-  analogWrite(LED_BUILTIN, DEF_VAL);
+  analogWrite((25u), 110);
 
   mpu.setMagneticDeclination(-0.02356194);
   Serial.println("Calibration complete");
@@ -108,13 +98,13 @@ void setup1()
   for (int i : button_pin)
     pinMode(i, INPUT_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(button_pin[0]), pin1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(button_pin[1]), pin2, FALLING);
-  attachInterrupt(digitalPinToInterrupt(button_pin[2]), pin3, FALLING);
-  attachInterrupt(digitalPinToInterrupt(button_pin[3]), pin4, FALLING);
-  tftHelper.displayInfo(init_screen, 2, tw / 7, th / 3, ST77XX_BLUE, ST77XX_ORANGE);
+  attachInterrupt((button_pin[0]), pin1, FALLING);
+  attachInterrupt((button_pin[1]), pin2, FALLING);
+  attachInterrupt((button_pin[2]), pin3, FALLING);
+  attachInterrupt((button_pin[3]), pin4, FALLING);
+  tftHelper.displayInfo(init_screen, 2, tw / 7, th / 3, 0x001F, 0xFC00);
   delay(1000);
-  tft.fillScreen(ST77XX_BLACK);
+  tft.fillScreen(0x0000);
   tftHelper.createMenu("MENU", items, item_count);
 }
 
@@ -140,9 +130,13 @@ void loop()
 }
 
 /*
+
  * currently uses the second core for reading pwm
+
  * without blocking the main loop
+
  */
+# 146 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
 // Stores the current menu item selected
 int curr_menu_item = -1,
     sub_menu_item = -1;
@@ -162,7 +156,7 @@ void loop1()
       tftHelper.updateIMU(pitch, roll, yaw);
       break;
     }
-  // Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
+  Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
 }
 
 void pidTuner()
