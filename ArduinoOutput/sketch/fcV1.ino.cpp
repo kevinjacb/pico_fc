@@ -48,8 +48,8 @@ MPU9250 mpu;
 MPU9250Setting setting;
 Servo output[4];
 Adafruit_ST7735 tft = Adafruit_ST7735(CS, A0, MOSI, SCLK, RESET);
-GUI tftHelper = GUI(&tft);
 VAR variables = VAR();
+GUI tftHelper = GUI(&tft, &variables);
 
 #line 53 "d:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV1\\fcV1.ino"
 void setup();
@@ -136,7 +136,7 @@ void setup()
 void setup1()
 {
   String *items = variables.menu_items;
-  int item_count = variables.menu_item_count;
+  int item_count = variables.main_menu_count;
   for (int i : receiver_pin)
     pinMode(i, INPUT);
   for (int i : button_pin)
@@ -165,7 +165,7 @@ void loop()
   pidTuner();
   calcPid();
   setMotorSpeed();
-  printOutput();
+  // printOutput();
   prev_pitch = pitch;
   prev_roll = roll;
   prev_yaw = yaw;
@@ -196,7 +196,7 @@ void loop1()
       tftHelper.updateIMU(pitch, roll, yaw);
       break;
     }
-  Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
+  // Serial.printf("curr menu item -> %d ,sub menu item -> %d", curr_menu_item, sub_menu_item);
 }
 
 void pidTuner()
@@ -330,10 +330,11 @@ void ISR(byte pin)
   if (micros() - prev_switch_interrupt < 10000)
     return;
   bool up = false;
+  Serial.printf("Test ->");
   if (!mode_selected)
   {
     String *items = variables.menu_items;
-    int item_count = variables.menu_item_count;
+    int item_count = variables.main_menu_count;
     switch (pin)
     {
     case 0:
@@ -354,42 +355,44 @@ void ISR(byte pin)
       break;
 
     case 2:
+      variables.curr_menu_item = curr_menu_item;
+      Serial.printf(" curr menu item -> %d\n", variables.curr_menu_item);
       mode_selected = true;
       tftHelper.selectItem(curr_menu_item);
       break;
     }
-    variables.curr_menu_item = curr_menu_item;
   }
   else
   { // separated switch case because i felt that was easier to understand
-    int item_count = variables.sub_menu_count[curr_menu_item];
-    String items[item_count];
+    int item_count;
+    String *items;
+    variables.getMenu(&items, &item_count);
+    Serial.printf("item count -> %d\n", item_count);
     for (int i = 0; i < item_count; i++)
-      items[i] = variables.sub_menu_items[variables.sub_menu_count_sum[curr_menu_item] - i - 1];
-    switch (pin)
-    {
-    case 0:
-      if (sub_menu_item <= 0)
+      switch (pin)
       {
-        sub_menu_item = item_count - 1;
-        prev_item = 0;
-        up = true;
+      case 0:
+        if (sub_menu_item <= 0)
+        {
+          sub_menu_item = item_count - 1;
+          prev_item = 0;
+          up = true;
+        }
+        else
+          sub_menu_item--;
+        tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
+        break;
+
+      case 1:
+        sub_menu_item = (sub_menu_item + 1) % item_count;
+        tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
+        break;
+
+      case 2:
+        sub_selected = true;
+        tftHelper.selectItem(sub_menu_item);
+        break;
       }
-      else
-        sub_menu_item--;
-      tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
-      break;
-
-    case 1:
-      sub_menu_item = (sub_menu_item + 1) % item_count;
-      tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
-      break;
-
-    case 2:
-      sub_selected = true;
-      tftHelper.selectItem(sub_menu_item);
-      break;
-    }
   }
   prev_switch_interrupt = micros();
 }

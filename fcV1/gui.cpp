@@ -1,12 +1,15 @@
 #include "gui.h"
 #include <Adafruit_ST7735.h>
 #include <Adafruit_GFX.h>
+#include <iostream>
+using namespace std;
 
-GUI::GUI(Adafruit_ST7735 *tft) : tft(tft)
+GUI::GUI(Adafruit_ST7735 *tft, VAR *variables) : tft(tft)
 {
   tft->initR(INITR_BLACKTAB);
   tft->fillScreen(ST77XX_BLACK);
   tft->setRotation(1);
+  this->variables = variables;
 }
 
 void GUI::displayInfo(String data, int text_size, int x, int y, int16_t color, int16_t bg, bool clr, bool shift)
@@ -44,10 +47,10 @@ int GUI::createHorizontalWidgets(String items[], int y, int count, String prefix
 int GUI::IMUScreen()
 {
   String items[] = {"PITCH: ", "ROLL: ", "YAW: "};
-  int item_count = 3, option_count = 2, h = init_y + incr_y * (item_count + 1);
-  String options[option_count];
-  for (int i = 0; i < option_count; i++)
-    options[i] = variables.sub_menu_items[variables.sub_menu_count_sum[0] - i - 1];
+  int item_count = 3, option_count, h = init_y + incr_y * (item_count + 1);
+  String *options;
+  variables->getMenu(&options, &option_count);
+  Serial.printf("String : %s\n", options[0]);
   tft->drawRect(0, 0, tw, th, ST77XX_RED);
   GUI::createMenu("IMU", items, item_count, "~");
   GUI::createHorizontalWidgets(options, h, option_count);
@@ -135,7 +138,7 @@ int GUI::highlightItem(String items[], int item, int prev_item, int item_count, 
   }
   else
   {
-    int sub_item_count = variables.menu_list_item_count[variables.curr_menu_item];
+    int sub_item_count = variables->menu_content_list_count[variables->curr_menu_item];
     int w_space = tw / item_count, w_offset = 10;
     if (prev_item != -1)
       GUI::displayInfo("-> " + items[prev_item], 1, w_offset + (w_space + 10) * prev_item, init_y + incr_y * sub_item_count, ST77XX_CYAN, ST77XX_BLACK, false, false);
