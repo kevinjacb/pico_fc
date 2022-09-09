@@ -296,8 +296,8 @@ void ISR(byte pin)
   if (micros() - prev_switch_interrupt < 10000)
     return;
   bool up = false;
-  Serial.printf("Test ->");
-  if (!mode_selected)
+  Serial.printf("Button Clicked");
+  if (!mode_selected) // Check to see which menu to display
   {
     String *items = variables.menu_items;
     int item_count = variables.main_menu_count;
@@ -333,32 +333,33 @@ void ISR(byte pin)
     int item_count;
     String *items;
     variables.getMenu(&items, &item_count);
-    Serial.printf("item count -> %d\n", item_count);
-    for (int i = 0; i < item_count; i++)
-      switch (pin)
+    // Serial.printf("item count -> %d\n", item_count);
+    // for (int i = 0; i < item_count; i++)
+    //   Serial.println(items[i]);
+    switch (pin)
+    {
+    case 0:
+      if (sub_menu_item <= 0)
       {
-      case 0:
-        if (sub_menu_item <= 0)
-        {
-          sub_menu_item = item_count - 1;
-          prev_item = 0;
-          up = true;
-        }
-        else
-          sub_menu_item--;
-        tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
-        break;
-
-      case 1:
-        sub_menu_item = (sub_menu_item + 1) % item_count;
-        tftHelper.highlightItem(items, sub_menu_item, prev_item, item_count, false);
-        break;
-
-      case 2:
-        sub_selected = true;
-        tftHelper.selectItem(sub_menu_item);
-        break;
+        sub_menu_item = item_count - 1;
+        prev_sub_item = 0;
+        up = true;
       }
+      else
+        sub_menu_item--;
+      tftHelper.highlightItem(items, sub_menu_item, prev_sub_item, item_count, false);
+      break;
+
+    case 1:
+      sub_menu_item = (sub_menu_item + 1) % item_count;
+      tftHelper.highlightItem(items, sub_menu_item, prev_sub_item, item_count, false);
+      break;
+
+    case 2:
+      sub_selected = true;
+      tftHelper.selectItem(sub_menu_item, sub_selected);
+      break;
+    }
   }
   prev_switch_interrupt = micros();
 }

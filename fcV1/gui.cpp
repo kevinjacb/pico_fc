@@ -38,7 +38,7 @@ int GUI::createMenu(String title, String items[], int count, String prefix)
 
 int GUI::createHorizontalWidgets(String items[], int y, int count, String prefix)
 {
-  int w_space = tw / (count + 0.4), w_offset = 10;
+  int w_space = tw / count, w_offset = 10;
   for (int i = 0; i < count; i++)
     GUI::displayInfo(prefix + items[i], 1, w_offset + (w_space + 10) * i, y, ST77XX_CYAN, ST77XX_BLACK);
   return 1;
@@ -55,7 +55,7 @@ int GUI::IMUScreen()
   GUI::createMenu("IMU", items, item_count, "~");
   GUI::createHorizontalWidgets(options, h, option_count);
   tft->drawRect(0, h - 7, tw, 23, ST77XX_YELLOW);
-  tft->drawLine(tw / 2, h - 7, tw / 2, h + 15, ST77XX_YELLOW);
+  tft->drawLine(tw / 2 + 10, h - 7, tw / 2 + 10, h + 15, ST77XX_YELLOW);
   tft->drawRect(0, 0, tw, th, ST77XX_GREEN);
   return 1;
 }
@@ -130,19 +130,19 @@ int GUI::updateTrimming()
 
 int GUI::highlightItem(String items[], int item, int prev_item, int item_count, bool vertical)
 {
-  if (vertical)
+  if (vertical) // scroll vertically
   {
     if (prev_item != -1)
       GUI::displayInfo("-> " + items[prev_item], 1, tw / 10, init_y + incr_y * prev_item, ST77XX_CYAN, ST77XX_BLACK, false, false);
     GUI::displayInfo("-> " + items[item], 1, tw / 10, init_y + incr_y * item, ST77XX_BLACK, ST77XX_WHITE, false, false);
   }
-  else
+  else // scroll horizontally
   {
-    int sub_item_count = variables->menu_content_list_count[variables->curr_menu_item];
+    int sub_list_count = variables->menu_content_list_count[variables->curr_menu_item];
     int w_space = tw / item_count, w_offset = 10;
     if (prev_item != -1)
-      GUI::displayInfo("-> " + items[prev_item], 1, w_offset + (w_space + 10) * prev_item, init_y + incr_y * sub_item_count, ST77XX_CYAN, ST77XX_BLACK, false, false);
-    GUI::displayInfo("-> " + items[item], 1, w_offset + (w_space + 10) * item, init_y + incr_y * sub_item_count, ST77XX_BLACK, ST77XX_WHITE, false, false);
+      GUI::displayInfo("-> " + items[prev_item], 1, w_offset + (w_space + 10) * prev_item, init_y + incr_y * (sub_list_count + 1), ST77XX_CYAN, ST77XX_BLACK, false, false);
+    GUI::displayInfo("-> " + items[item], 1, w_offset + (w_space + 10) * item, init_y + incr_y * (sub_list_count + 1), ST77XX_BLACK, ST77XX_WHITE, false, false);
   }
   return 1;
 }

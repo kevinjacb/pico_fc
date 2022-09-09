@@ -26,7 +26,7 @@ public:
             *count = 2;
             break;
         }
-    }
+        }
 };
 
 string opts[] = {"hello", "ylllep"};
