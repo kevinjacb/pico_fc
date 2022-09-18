@@ -1,9 +1,12 @@
-#ifdef IMU
-#define IMU
+#ifndef IMU_H
+#define IMU_H
 
 #include <Arduino.h>
+#include "MPU9250.h"
 
-class MPU
+#define ADDR 0x68
+
+class IMU
 {
 
 private:
@@ -14,9 +17,10 @@ private:
         prev_pitch, prev_roll, prev_yaw; // stores prev angle values
 
 public:
-    MPU();
-    int updateAngles();                                  // reads from imu
-    int readAngles(int *pitch, int *roll, int *yaw);     // stores pitch roll yaw into the variables
-    int readPrevAngles(int *pitch, int *roll, int *yaw); // stores prev angles
+    IMU();
+    int updateAngles();
+    void updatePrevAngles();                                   // reads from imu
+    int readAngles(float *pitch, float *roll, float *yaw);     // stores pitch roll yaw into the variables
+    int readPrevAngles(float *pitch, float *roll, float *yaw); // stores prev angles
 };
 #endif
