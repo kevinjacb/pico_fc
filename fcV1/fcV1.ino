@@ -336,6 +336,7 @@ void ISR(byte pin)
     // Serial.printf("item count -> %d\n", item_count);
     // for (int i = 0; i < item_count; i++)
     //   Serial.println(items[i]);
+
     switch (pin)
     {
     case 0:
@@ -355,11 +356,12 @@ void ISR(byte pin)
       tftHelper.highlightItem(items, sub_menu_item, prev_sub_item, item_count, false);
       break;
 
-    case 2:
-      sub_selected = true;
-      tftHelper.selectItem(sub_menu_item, sub_selected);
-      break;
+      // case 2:                TODO
+      //   sub_selected = true;
+      //   tftHelper.selectItem(sub_menu_item, sub_selected);
+      //   break;
     }
+    Serial.println(sub_menu_item);
   }
   prev_switch_interrupt = micros();
 }

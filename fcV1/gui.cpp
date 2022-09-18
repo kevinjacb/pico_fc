@@ -128,7 +128,7 @@ int GUI::updateTrimming()
   return 1;
 }
 
-int GUI::highlightItem(String items[], int item, int prev_item, int item_count, bool vertical)
+int GUI::highlightItem(String *items, int item, int prev_item, int item_count, bool vertical)
 {
   if (vertical) // scroll vertically
   {
@@ -140,11 +140,14 @@ int GUI::highlightItem(String items[], int item, int prev_item, int item_count, 
   {
     int sub_list_count = variables->menu_content_list_count[variables->curr_menu_item];
     int w_space = tw / item_count, w_offset = 10;
-    if (prev_item != -1)
-      GUI::displayInfo("-> " + items[prev_item], 1, w_offset + (w_space + 10) * prev_item, init_y + incr_y * (sub_list_count + 1), ST77XX_CYAN, ST77XX_BLACK, false, false);
-    GUI::displayInfo("-> " + items[item], 1, w_offset + (w_space + 10) * item, init_y + incr_y * (sub_list_count + 1), ST77XX_BLACK, ST77XX_WHITE, false, false);
+    String pitem = String("-> " + items[prev_item]), citem = String("-> " + items[item]);
+    // if (prev_item != -1)
+    //   GUI::displayInfo(pitem, 1, w_offset + (w_space + 10) * prev_item, init_y + incr_y * (sub_list_count + 1), ST77XX_CYAN, ST77XX_BLACK, false, false);
+    // GUI::displayInfo(citem, 1, w_offset + (w_space + 10) * item, init_y + incr_y * (sub_list_count + 1), ST77XX_BLACK, ST77XX_WHITE, false, false);
+
+    Serial.printf("citem = %d, pitem = %d, item_count = %d, sub_list = %d", item, prev_item, item_count, sub_list_count);
+    return 1;
   }
-  return 1;
 }
 
 int GUI::selectItem(int item, bool sub)
