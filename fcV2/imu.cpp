@@ -7,8 +7,11 @@ IMU::IMU()
     Serial.println("Press any key to do mpu calibration");
     while (!Serial.available())
         ;
+    Serial.println("Calibrating...");
     mpu.calibrateAccelGyro();
     mpu.calibrateMag();
+
+    Serial.println("Calibration complete");
 
     // mpu.setMagneticDeclination(-0.02356194);
     // mpu.verbose(false);
@@ -26,7 +29,9 @@ IMU::IMU()
 
 int IMU::updateAngles()
 { // reads current angles measured by mpu
-
+    prev_pitch = curr_pitch;
+    prev_roll = curr_roll;
+    prev_yaw = curr_yaw;
     if (!mpu.update())
         return 1;
     curr_pitch = mpu.getPitch();
@@ -51,11 +56,4 @@ int IMU::readPrevAngles(float *pitch, float *roll, float *yaw)
     *yaw = prev_yaw;
 
     return 0;
-}
-
-void IMU::updatePrevAngles()
-{
-    prev_pitch = curr_pitch;
-    prev_roll = curr_roll;
-    prev_yaw = curr_yaw;
 }

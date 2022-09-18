@@ -14,7 +14,7 @@ private:
 
 public:
     PID(IMU *mpu);
-    int calcPID(int **pwm, int throttle = 0, float desired_pitch_angle = 0.0, float desired_roll_angle = 0.0, float desired_yaw_angle = 0.0);
+    int calcPID(int pwm[], int throttle = 0, float desired_pitch_angle = 0.0, float desired_roll_angle = 0.0, float desired_yaw_angle = 0.0);
 };
 
 #endif

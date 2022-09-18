@@ -18,8 +18,7 @@ private:
 
 public:
     IMU();
-    int updateAngles();
-    void updatePrevAngles();                                   // reads from imu
+    int updateAngles();                                        // reads from imu
     int readAngles(float *pitch, float *roll, float *yaw);     // stores pitch roll yaw into the variables
     int readPrevAngles(float *pitch, float *roll, float *yaw); // stores prev angles
 };

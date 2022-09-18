@@ -10,9 +10,9 @@ PID::PID(IMU *mpu)
     this->mpu = mpu;
 }
 
-int PID::calcPID(int **pwm, int throttle, float desired_pitch_angle, float desired_roll_angle, float desired_yaw_angle)
+int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desired_roll_angle, float desired_yaw_angle)
 {
-    int *pwm_copy = *pwm;
+    // int *pwm_copy = pwm;
     float pitch, roll, yaw,
         prev_pitch, prev_roll, prev_yaw;
 
@@ -57,10 +57,10 @@ int PID::calcPID(int **pwm, int throttle, float desired_pitch_angle, float desir
     //
 
     // adjusting pwm values for balance
-    *pwm[0] = throttle + pitch_pid + roll_pid + yaw_pid;
-    *pwm[1] = throttle + pitch_pid - roll_pid - yaw_pid;
-    *pwm[2] = throttle - pitch_pid - roll_pid + yaw_pid;
-    *pwm[3] = throttle - pitch_pid + roll_pid - yaw_pid;
+    pwm[0] = throttle + pitch_pid + roll_pid + yaw_pid;
+    pwm[1] = throttle + pitch_pid - roll_pid - yaw_pid;
+    pwm[2] = throttle - pitch_pid - roll_pid + yaw_pid;
+    pwm[3] = throttle - pitch_pid + roll_pid - yaw_pid;
 
     return 0;
 }
