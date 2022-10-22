@@ -2,15 +2,17 @@
 #define RECEIVER_H
 
 #include <Arduino.h>
+#include "indicator.h"
 
 class RECEIVER
 {
 private:
-    const int receiver_pin[5] = {12, 13, 11, 10, 14}; // rudder,throttle,elevator,aileron
+    CHECKS *errorHandler;
+    const int receiver_pin[6] = {9, 10, 11, 12, 13, 14}; // rudder,throttle,elevator,aileron
     const int active_pins = 4;
 
 public:
-    RECEIVER();
+    RECEIVER(CHECKS *errorHandler);
     int readPWM(int channels[]);
 };
 

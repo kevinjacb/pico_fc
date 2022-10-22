@@ -3,6 +3,7 @@
 #include "receiver.h"
 #include "imu.h"
 #include "output.h"
+#include "indicator.h"
 
 #define I2C_SDA 4
 #define I2C_SCL 5
@@ -11,6 +12,7 @@ IMU *mpu;
 PID *pid;
 CONTROL *control;
 RECEIVER *receiver;
+CHECKS *errorHandler = NULL;
 
 bool initialized = false;
 const int throttle_thresh = 1150;
@@ -27,10 +29,11 @@ void setup()
 
     throttle = aileron = elevator = rudder = 1000;
     initialize();
-    mpu = new IMU();
+    errorHandler = new CHECKS();
+    mpu = new IMU(errorHandler);
     pid = new PID(mpu);
     control = new CONTROL();
-    pinMode(LED_BUILTIN, OUTPUT);
+    // pinMode(LED_BUILTIN, OUTPUT);
 
     initialized = true;
 
@@ -39,11 +42,15 @@ void setup()
 
 void loop()
 {
-    if (millis() - prev_led > 1000)
-    {
-        digitalWrite(LED_BUILTIN, (state = abs(state - 1)));
-        prev_led = millis();
-    }
+    errorHandler->blink(millis()); // makes sure the error is displayed
+
+    if (errorHandler->ok() == 1)
+        return;
+    // if (millis() - prev_led > 1000)
+    // {
+    //     digitalWrite(LED_BUILTIN, (state = abs(state - 1)));
+    //     prev_led = millis();
+    // }
     int start = millis();
     mpu->updateAngles();
 
@@ -66,7 +73,9 @@ void loop()
 
 void setup1()
 {
-    receiver = new RECEIVER();
+    while (errorHandler == NULL)
+        ;
+    receiver = new RECEIVER(errorHandler);
 }
 
 // All serial printing in the second loop

@@ -26,6 +26,7 @@ void CHECKS::setError(int c_state)
         break;
     case 1:
         state[2] = true;
+        delay_r = 500;
         setStates();
         break;
     case 2:
@@ -65,7 +66,7 @@ void CHECKS::blink(long c_time)
     }
 }
 
-bool CHECKS::arm()
+int CHECKS::ok()
 {
-    return error == 0;
+    return error;
 }

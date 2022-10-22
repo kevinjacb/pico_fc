@@ -20,7 +20,7 @@
 class CHECKS
 {
 private:
-    const byte indi_g = 2, indi_b = 3, indi_r = 6; // green, blue, red led pins
+    const int indi_g = 2, indi_b = 3, indi_r = 6; // green, blue, red led pins
     int error = 0,
         delay_b = 0,
         delay_g = 0,
@@ -34,7 +34,7 @@ public:
     void setStates();
     void setError(int c_state);
     void blink(long c_time); // blinks the leds
-    bool arm();              // returns whether armable
+    int ok();                // returns whether armable
 };
 
 #endif

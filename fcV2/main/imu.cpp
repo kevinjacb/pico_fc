@@ -1,8 +1,9 @@
 #include "imu.h"
 #include "MPU9250.h"
+#include "indicator.h"
 #include <Arduino.h>
 
-IMU::IMU()
+IMU::IMU(CHECKS *errorHandler)
 {
     Serial.println("Press any key to do mpu calibration");
     // while (!Serial.available())
@@ -18,13 +19,31 @@ IMU::IMU()
     settings.gyro_dlpf_cfg = GYRO_DLPF_CFG::DLPF_20HZ;
     settings.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_21HZ;
 
+    long start_time = millis();
     while (!mpu.setup(ADDR, settings))
-        ;
+    {
+        if (millis() - start_time > 10000)
+        {
+            initialized = false;
+            break;
+        }
+    }
+
+    if (!initialized)
+    {
+        errorHandler->setError(1);
+        return;
+    }
+    errorHandler->setError(4); // starts calibration
 
     mpu.calibrateAccelGyro();
     mpu.calibrateMag();
 
-    updateAngles();
+    errorHandler->setError(0);
+
+    errorHandler -
+
+        updateAngles();
     readAngles(&prev_pitch, &prev_roll, &prev_yaw);
 }
 
