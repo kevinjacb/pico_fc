@@ -35,6 +35,11 @@
     "Includepath": null
   },
   {
+    "Sourcefile": "D:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV2\\arduinoOutput\\sketch\\indicator.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
     "Sourcefile": "D:\\projectnightsky\\BIG DRONE\\new_fc_pico\\fcV2\\arduinoOutput\\sketch\\output.cpp",
     "Include": "",
     "Includepath": null

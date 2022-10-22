@@ -1,4 +1,5 @@
 #include "indicator.h"
+#include <Arduino.h>
 
 CHECKS::CHECKS()
 {
@@ -14,10 +15,10 @@ void CHECKS::setStates()
     digitalWrite(indi_r, state[2]);
 }
 
-void CHECKS::setError(int state)
+void CHECKS::setError(int c_state)
 {
     delay_b = delay_g = delay_r = 0;
-    switch (state)
+    switch (c_state)
     {
     case 0:
         state[1] = true;
@@ -36,12 +37,13 @@ void CHECKS::setError(int state)
         setStates();
         delay_b = 1000;
         break;
+
+    case 4:
+        state[0] = state[1] = true;
+        setStates();
+        delay_b = 200;
+        break;
     }
-case 4:
-    state[0] = state[1] = true;
-    setStates();
-    delay_b = 200;
-    break;
 }
 
 void CHECKS::blink(long c_time)

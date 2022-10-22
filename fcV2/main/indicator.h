@@ -1,6 +1,7 @@
 #ifndef INDIC
 #define INDIC
 
+#include <Arduino.h>
 /*
     ERRORS :
         0 -> no error (green);
@@ -27,11 +28,13 @@ private:
     bool state[3] = {false, false, false}; // bgr
     long p_time[3] = {0, 0, 0};            // delay in milliseconds for blinking leds
     bool armed = false;
-    CHECKS();
-    void setStates();
 
 public:
-    void setError(int state);
-    void blink(int c_time); // blinks the leds
-    bool arm();             // returns whether armable
-}
+    CHECKS();
+    void setStates();
+    void setError(int c_state);
+    void blink(long c_time); // blinks the leds
+    bool arm();              // returns whether armable
+};
+
+#endif
