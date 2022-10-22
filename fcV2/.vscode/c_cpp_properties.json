@@ -12,7 +12,8 @@
                 "-mthumb",
                 "-ffunction-sections",
                 "-fdata-sections",
-                "-fno-exceptions"
+                "-fexceptions",
+                "-fstack-protector"
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
@@ -56,6 +57,10 @@
                 "ARDUINO_RASPBERRY_PI_PICO",
                 "BOARD_NAME=\"RASPBERRY_PI_PICO\"",
                 "ARDUINO_ARCH_RP2040",
+                "DEBUG_RP2040_PORT=Serial",
+                "DEBUG_RP2040_WIRE",
+                "DEBUG_RP2040_SPI",
+                "DEBUG_RP2040_CORE",
                 "__DBL_MIN_EXP__=(-1021)",
                 "__HQ_FBIT__=15",
                 "__cpp_attributes=200809L",

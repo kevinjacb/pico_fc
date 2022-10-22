@@ -1,7 +1,7 @@
 {
     "sketch": "main\\main.ino",
     "board": "rp2040:rp2040:rpipico",
-    "configuration": "flash=2097152_0,freq=133,opt=Small,rtti=Disabled,stackprotect=Disabled,exceptions=Disabled,dbgport=Disabled,dbglvl=None,usbstack=picosdk,ipstack=ipv4only",
+    "configuration": "flash=2097152_0,freq=133,opt=Small,rtti=Enabled,stackprotect=Enabled,exceptions=Enabled,dbgport=Serial,dbglvl=All,usbstack=picosdk,ipstack=ipv4only",
     "port": "COM14",
     "output": "D:/projectnightsky/BIG DRONE/new_fc_pico/fcV2/arduinoOutput"
 }

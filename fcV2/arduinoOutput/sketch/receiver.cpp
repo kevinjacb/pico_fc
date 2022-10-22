@@ -3,14 +3,14 @@
 
 RECEIVER::RECEIVER()
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < active_pins; i++)
         pinMode(receiver_pin[i], INPUT);
 }
 
 int RECEIVER::readPWM(int channels[])
 {
-    for (int i = 0; i < 5; i++)
-        channels[i] = pulseIn(receiver_pin[i], HIGH, 3000);
+    for (int i = 0; i < active_pins; i++)
+        channels[i] = pulseIn(receiver_pin[i], HIGH);
 
     return 0;
 }

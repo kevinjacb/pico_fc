@@ -10,6 +10,7 @@ PID::PID(IMU *mpu)
     this->mpu = mpu;
 }
 
+// calculates and adds the pids to motor values
 int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desired_roll_angle, float desired_yaw_angle)
 {
     // int *pwm_copy = pwm;
@@ -52,8 +53,8 @@ int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desir
     yaw_pid = yaw_p + yaw_d + yaw_i;
 
     // TO BE REMOVED AFTER TESTING
-    yaw_pid = 0;
-    roll_pid = 0;
+    // yaw_pid = 0;
+    // pitch_pid = 0;
     //
 
     // adjusting pwm values for balance
