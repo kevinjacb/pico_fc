@@ -2,6 +2,8 @@
 ## A flight controller based off raspberry pico.
 ### ⚠️ Under development ⚠️
 
+## Latest: fcV2
+
 ## Connections:
 
 ### *RPI PICO -> COMPONENTS*
