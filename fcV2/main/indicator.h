@@ -17,6 +17,11 @@
 
 */
 
+/* MUTEX CONFIG:
+        0 -> imu
+        1 -> receiver
+        */
+
 class CHECKS
 {
 private:
@@ -25,6 +30,7 @@ private:
         delay_b = 0,
         delay_g = 0,
         delay_r = 0;
+    int mutex = -1;
     bool state[3] = {false, false, false}; // bgr
     long p_time[3] = {0, 0, 0};            // delay in milliseconds for blinking leds
     bool armed = false;
@@ -32,9 +38,9 @@ private:
 public:
     CHECKS();
     void setStates();
-    void setError(int c_state);
-    void blink(long c_time); // blinks the leds
-    int ok();                // returns whether armable
+    bool setError(int c_state, int mx = -1, bool done = true); // state, accessing mutex id, hold mutex till done
+    void blink(long c_time);                                   // blinks the leds
+    int ok();                                                  // returns whether armable
 };
 
 #endif

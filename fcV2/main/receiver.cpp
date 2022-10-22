@@ -16,6 +16,6 @@ int RECEIVER::readPWM(int channels[])
         channels[i] = pulseIn(receiver_pin[i], HIGH);
 
     if (millis() - elapsed > 3000)
-        errorHandler->setError(2);
+        errorHandler->setError(2, 1);
     return 0;
 }

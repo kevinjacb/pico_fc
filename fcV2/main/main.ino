@@ -82,6 +82,7 @@ void setup1()
 void loop1()
 {
 
+    errorHandler->blink(millis());
     receiver->readPWM(channels);
     pidInp();
     printInfo("outputs", motor_output, 4); // remove

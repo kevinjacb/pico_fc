@@ -20,6 +20,8 @@ IMU::IMU(CHECKS *errorHandler)
     settings.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_21HZ;
 
     long start_time = millis();
+    while (!(errorHandler->setError(0, 0, false)))
+        ;
     while (!mpu.setup(ADDR, settings))
     {
         if (millis() - start_time > 10000)
@@ -31,19 +33,17 @@ IMU::IMU(CHECKS *errorHandler)
 
     if (!initialized)
     {
-        errorHandler->setError(1);
+        errorHandler->setError(1, 0, false);
         return;
     }
-    errorHandler->setError(4); // starts calibration
+    errorHandler->setError(4, 0, false); // starts calibration
 
     mpu.calibrateAccelGyro();
     mpu.calibrateMag();
 
-    errorHandler->setError(0);
+    errorHandler->setError(0, 0);
 
-    errorHandler -
-
-        updateAngles();
+    updateAngles();
     readAngles(&prev_pitch, &prev_roll, &prev_yaw);
 }
 

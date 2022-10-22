@@ -15,9 +15,14 @@ void CHECKS::setStates()
     digitalWrite(indi_r, state[2]);
 }
 
-void CHECKS::setError(int c_state)
+bool CHECKS::setError(int c_state, int mx, bool done)
 {
+    if (mutex != -1 && mx != mutex)
+        return false;
+    if (mutex == -1 && mx != -1)
+        mutex = mx;
     delay_b = delay_g = delay_r = 0;
+    state[0] = state[1] = state[2] = false;
     switch (c_state)
     {
     case 0:
@@ -45,6 +50,9 @@ void CHECKS::setError(int c_state)
         delay_b = 200;
         break;
     }
+    if (done)
+        mutex = -1;
+    return true;
 }
 
 void CHECKS::blink(long c_time)
