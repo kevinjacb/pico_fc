@@ -1,5 +1,5 @@
 # Pico FC !
-## A flight controller based off raspberry pico.
+## A flight controller based on raspberry pico.
 ### ⚠️ Under development ⚠️
 
 ## Latest: fcV2
