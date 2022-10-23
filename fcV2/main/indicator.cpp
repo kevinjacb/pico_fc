@@ -19,10 +19,13 @@ bool CHECKS::setError(int c_state, int mx, bool done)
 {
     if (mutex != -1 && mx != mutex)
         return false;
+    if (c_state == error)
+        return true;
     if (mutex == -1 && mx != -1)
         mutex = mx;
     delay_b = delay_g = delay_r = 0;
     state[0] = state[1] = state[2] = false;
+    Serial.println("STATTET -> " + String(c_state));
     switch (c_state)
     {
     case 0:
@@ -36,6 +39,8 @@ bool CHECKS::setError(int c_state, int mx, bool done)
         break;
     case 2:
         state[0] = state[1] = true;
+        delay_b = 500;
+        // Serial.println("Set delay_b as " + String(delay_b)); // debug
         setStates();
         break;
     case 3:
@@ -47,9 +52,13 @@ bool CHECKS::setError(int c_state, int mx, bool done)
     case 4:
         state[0] = state[1] = true;
         setStates();
-        delay_b = 200;
+        break;
+    case 5:
+        state[0] = state[1] = state[2] = true;
+        setStates();
         break;
     }
+    error = c_state;
     if (done)
         mutex = -1;
     return true;
@@ -57,21 +66,24 @@ bool CHECKS::setError(int c_state, int mx, bool done)
 
 void CHECKS::blink(long c_time)
 {
-    if (c_time - p_time[0] > delay_b && delay_b)
+    // Serial.println(delay_b); // debug
+    if ((c_time - p_time[0]) > delay_b && delay_b)
     {
+        Serial.println("Accessing blue"); // debug
         state[0] = !state[0];
         p_time[0] = c_time;
     }
-    if (c_time - p_time[1] > delay_g && delay_g)
+    if ((c_time - p_time[1]) > delay_g && delay_g)
     {
         state[1] = !state[1];
         p_time[1] = c_time;
     }
-    if (c_time - p_time[2] > delay_r && delay_r)
+    if ((c_time - p_time[2]) > delay_r && delay_r)
     {
         state[2] = !state[2];
         p_time[2] = c_time;
     }
+    setStates();
 }
 
 int CHECKS::ok()

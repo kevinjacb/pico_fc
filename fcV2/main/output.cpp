@@ -18,3 +18,11 @@ int CONTROL::setSpeeds(int pwm[]) // sends pwm signals to escs
         motor[i].writeMicroseconds(pwm[i]);
     return 0;
 }
+
+int CONTROL::turnOff(int pwm[])
+{
+    for (int i = 0; i < 4; i++)
+        pwm[i] = 1000;
+    setSpeeds(pwm);
+    return 0;
+}

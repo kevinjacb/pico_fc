@@ -20,7 +20,7 @@ IMU::IMU(CHECKS *errorHandler)
     settings.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_21HZ;
 
     long start_time = millis();
-    while (!(errorHandler->setError(0, 0, false)))
+    while (!(errorHandler->setError(5, 0, false)))
         ;
     while (!mpu.setup(ADDR, settings))
     {

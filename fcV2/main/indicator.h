@@ -6,11 +6,13 @@
     ERRORS :
         0 -> no error (green);
         1 -> failed to initialize imu (red blink 1 sec)
-        2 -> no connection to receiver (blue(steady) and green (steady))
+        2 -> no connection to receiver (blue(blink) and green (steady))
         3 -> needs calibration (blue green)(blink)
 
     STATE :
-        4 -> calibrating (fast blinking blue)
+        4 -> calibrating (steady blue)
+        5 -> Starting(all lit)
+
 */
 /*
     ARM : if error then no arming else arm
@@ -20,6 +22,7 @@
 /* MUTEX CONFIG:
         0 -> imu
         1 -> receiver
+        2 -> control
         */
 
 class CHECKS

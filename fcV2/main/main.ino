@@ -15,13 +15,16 @@ RECEIVER *receiver;
 CHECKS *errorHandler = NULL;
 
 bool initialized = false;
-const int throttle_thresh = 1150;
 
-int channels[5] = {1000, 1000, 1000, 1000, 1000};
+// int channels[5] = {1000, 1000, 1000, 1000, 1000};
 int motor_output[4] = {1000, 1000, 1000, 1000};
-int throttle, aileron, elevator, rudder;
-int prev_led = 1000;
-int state = 1;
+int throttle = 1000, aileron = 1000, elevator = 1000, rudder = 1000; // TODO set presets
+// int prev_led = 1000;
+// int state = 1;
+
+const int throttle_thresh = 1150,
+          arm_thresh = 1150;
+long arm_started = 0;
 
 void setup()
 {
@@ -54,12 +57,27 @@ void loop()
     int start = millis();
     mpu->updateAngles();
 
-    if (throttle > 1200)
+    if (receiver->armSequence())
+    {
+        errorHandler->setError(5, 2);
+        if (!arm_started)
+            arm_started = millis();
         // pid->calcPID(motor_output, throttle,aileron,elevator,rudder);
-        pid->calcPID(motor_output, throttle); // while pid testing *remove
-    else
-        for (int i = 0; i < 4; i++)
-            motor_output[i] = 1000;
+        if (throttle < arm_thresh)
+        {
+            if (millis() - arm_started > 3000)
+            {
+                arm_started = 0;
+                control->turnOff(motor_output);
+            }
+        }
+        else
+        {
+            pid->calcPID(motor_output, throttle);
+        } // while pid testing *remove
+    }
+    else if (!arm_started)
+        control->turnOff(motor_output);
 
     float pitch, roll, yaw;
     mpu->readAngles(&pitch, &roll, &yaw);
@@ -75,7 +93,7 @@ void setup1()
 {
     while (errorHandler == NULL)
         ;
-    receiver = new RECEIVER(errorHandler);
+    receiver = new RECEIVER(&errorHandler);
 }
 
 // All serial printing in the second loop
@@ -83,17 +101,10 @@ void loop1()
 {
 
     errorHandler->blink(millis());
-    receiver->readPWM(channels);
+    receiver->readPWM(&aileron, &elevator, &throttle, &rudder);
     pidInp();
     printInfo("outputs", motor_output, 4); // remove
     // printInfo("channels", channels, 5); // remove
-    throttle = map(channels[1], 1100, 1900, 1000, 2000);
-    if (throttle > throttle_thresh) // set threshold
-    {
-        aileron = map(channels[3], 1100, 2000, -45, 45);
-        elevator = map(channels[2], 1100, 2000, -45, 45);
-        rudder += map(channels[0], 1100, 2000, -10, 10);
-    }
 }
 
 void pidInp()
