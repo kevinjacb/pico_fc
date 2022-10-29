@@ -5,7 +5,7 @@
 
 IMU::IMU(CHECKS *errorHandler)
 {
-    Serial.println("Press any key to do mpu calibration");
+    // Serial.println("Press any key to do mpu calibration");
     // while (!Serial.available())
     //     ;
     // Serial.println("Calibrating...");

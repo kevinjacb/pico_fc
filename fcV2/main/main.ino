@@ -59,10 +59,18 @@ void loop()
 
     if (receiver->armSequence())
     {
+        for (int i = 0; i < 4; i++)
+            motor_output[i] = arm_thresh;
+        control->setSpeeds(motor_output);
         errorHandler->setError(5, 2);
         if (!arm_started)
             arm_started = millis();
         // pid->calcPID(motor_output, throttle,aileron,elevator,rudder);
+        // while pid testing *remove
+    }
+    else if (arm_started)
+    {
+
         if (throttle < arm_thresh)
         {
             if (millis() - arm_started > 3000)
@@ -74,9 +82,9 @@ void loop()
         else
         {
             pid->calcPID(motor_output, throttle);
-        } // while pid testing *remove
+        }
     }
-    else if (!arm_started)
+    else
         control->turnOff(motor_output);
 
     float pitch, roll, yaw;
@@ -104,6 +112,7 @@ void loop1()
     receiver->readPWM(&aileron, &elevator, &throttle, &rudder);
     pidInp();
     printInfo("outputs", motor_output, 4); // remove
+    receiver->display();
     // printInfo("channels", channels, 5); // remove
 }
 

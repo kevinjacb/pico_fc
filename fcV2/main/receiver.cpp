@@ -13,24 +13,40 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
 {
     long elapsed = millis();
 
+    raw_aileron = pulseIn(receiver_pin[0], HIGH);
+    raw_elevator = pulseIn(receiver_pin[1], HIGH);
+    raw_throttle = pulseIn(receiver_pin[2], HIGH);
+    raw_rudder = pulseIn(receiver_pin[3], HIGH);
+
     // Requires radio calibrated limits! TODO
-    *aileron = map(pulseIn(receiver_pin[0], HIGH), 1000, 2000, -max_pr, max_pr);
-    *elevator = map(pulseIn(receiver_pin[1], HIGH), 1000, 2000, -max_pr, max_pr);
-    *throttle = map(pulseIn(receiver_pin[2], HIGH), 1100, 1900, 1000, max_throttle);
-    *rudder = map(pulseIn(receiver_pin[3], HIGH), 1000, 2000, -max_yaw, max_yaw);
+    *aileron = map(raw_aileron, 1000, 2000, -max_pr, max_pr);
+    *elevator = map(raw_elevator, 1000, 2000, -max_pr, max_pr);
+    *throttle = map(raw_throttle, 1100, 1900, 1000, max_throttle);
+    *rudder = map(raw_rudder, 1000, 2000, -max_yaw, max_yaw);
 
     if (millis() - elapsed > 1000)
     {
         // Serial.println("receiver trig"); // debug
+        raw_aileron = raw_elevator = raw_rudder = raw_throttle = -1;
         (*errorHandler)->setError(2, 1);
     }
     return 0;
 }
 
+int RECEIVER::display()
+{
+    Serial.println("Aileron : " + String(raw_aileron));
+    Serial.println("Elevator : " + String(raw_elevator));
+    Serial.println("Throttle : " + String(raw_throttle));
+    Serial.println("Rudder : " + String(raw_rudder));
+    return 0;
+}
 bool RECEIVER::armSequence()
 {
-    if (throttle < 1200 && rudder < 1100 && elevator > 1900)
+    if (raw_throttle < 1200 && raw_rudder < 1100 && raw_aileron > 1900)
     {
+        if ((*errorHandler)->ok())
+            return false;
         if (!arm_started)
             arm_started = millis();
         else if (millis() - arm_started > 2000)
@@ -38,6 +54,8 @@ bool RECEIVER::armSequence()
     }
     else
     {
+        if (arm_started)
+            (*errorHandler)->setError(0);
         arm_started = 0;
     }
     return false;
