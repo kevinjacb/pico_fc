@@ -25,7 +25,6 @@ bool CHECKS::setError(int c_state, int mx, bool done)
         mutex = mx;
     delay_b = delay_g = delay_r = 0;
     state[0] = state[1] = state[2] = false;
-    Serial.println("STATTET -> " + String(c_state));
     switch (c_state)
     {
     case 0:

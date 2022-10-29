@@ -26,3 +26,14 @@ int CONTROL::turnOff(int pwm[])
     setSpeeds(pwm);
     return 0;
 }
+
+int CONTROL::ESCCalibration()
+{
+    int pwm[4];
+    for (int i = 0; i < 4; i++)
+        pwm[i] = 2000;
+    setSpeeds(pwm);
+    delay(2500);
+    turnOff(pwm);
+    return 0;
+}

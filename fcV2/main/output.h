@@ -15,6 +15,7 @@ public:
     CONTROL();
     int setSpeeds(int pwm[]);
     int turnOff(int pwm[]);
+    int ESCCalibration();
 };
 
 #endif

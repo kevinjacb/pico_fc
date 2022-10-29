@@ -4,15 +4,19 @@
 #include "imu.h"
 #include "output.h"
 #include "indicator.h"
+#include <SoftwareSerial.h>
 
 #define I2C_SDA 4
 #define I2C_SCL 5
+#define BL_TX 0
+#define BL_RX 1
 
 IMU *mpu;
 PID *pid;
 CONTROL *control;
 RECEIVER *receiver;
 CHECKS *errorHandler = NULL;
+// SoftwareSerial bl(BL_RX,BL_TX)
 
 bool initialized = false;
 

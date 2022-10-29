@@ -30,6 +30,10 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
         raw_aileron = raw_elevator = raw_rudder = raw_throttle = -1;
         (*errorHandler)->setError(2, 1);
     }
+    else if ((*errorHandler)->ok() == 2)
+    {
+        (*errorHandler)->setError(0, 1);
+    }
     return 0;
 }
 
