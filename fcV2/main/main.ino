@@ -4,7 +4,8 @@
 #include "imu.h"
 #include "output.h"
 #include "indicator.h"
-#include <SoftwareSerial.h>
+#include "eeprom.h"
+// #include <SoftwareSerial.h>
 
 #define I2C_SDA 4
 #define I2C_SCL 5
@@ -123,9 +124,9 @@ void loop1()
 void pidInp()
 {
     String data;
-    if (Serial.available() > 0)
+    if (Serial1.available() > 0)
     {
-        data = Serial.readString();
+        data = Serial1.readString();
         float val = (data.substring(1)).toFloat();
         switch (data[0])
         {
@@ -162,6 +163,7 @@ void printInfo(String label, float array[], int count)
 void initialize()
 {
     Serial.begin(115200);
+    Serial1.begin(115200);
     Wire.setSDA(I2C_SDA);
     Wire.setSCL(I2C_SCL);
     Wire.setClock(400000);
