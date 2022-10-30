@@ -17,6 +17,7 @@ PID *pid;
 CONTROL *control;
 RECEIVER *receiver;
 CHECKS *errorHandler = NULL;
+STATE *mem;
 // SoftwareSerial bl(BL_RX,BL_TX)
 
 bool initialized = false;
@@ -41,7 +42,10 @@ void setup()
     mpu = new IMU(errorHandler);
     pid = new PID(mpu);
     control = new CONTROL();
+    mem = new STATE();
     // pinMode(LED_BUILTIN, OUTPUT);
+
+    readStates();
 
     initialized = true;
 
@@ -54,6 +58,13 @@ void loop()
 
     if (errorHandler->ok() == 1)
         return;
+    if (receiver->getMode() == 1)
+    {
+        if (errorHandler->ok() != 6)
+            mem->writeTo(0, 1);
+        errorHandler->setError(6, 1, false);
+        return;
+    }
     // if (millis() - prev_led > 1000)
     // {
     //     digitalWrite(LED_BUILTIN, (state = abs(state - 1)));
@@ -168,4 +179,20 @@ void initialize()
     Wire.setSCL(I2C_SCL);
     Wire.setClock(400000);
     Wire.begin();
+}
+
+void readStates() // INCOMPLETE TODO
+{
+    for (int i = 0; i < mem->states(); i++)
+    {
+        byte state = mem->readFrom(i);
+        if (i == 0 && state)
+        {
+            while (errorHandler->setError(6, 2, false))
+                ;
+            control->ESCCalibration();
+            errorHandler->setError(0, 2);
+        }
+        // mem->writeTo(i, 0); TO BE UNCOMMENTED
+    }
 }

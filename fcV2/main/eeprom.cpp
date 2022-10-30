@@ -8,8 +8,13 @@ int STATE::writeTo(int mem, byte data)
     return 0;
 }
 
-int STATE::readFrom(int mem, byte *data)
+byte STATE::readFrom(int mem)
 {
-    *data = EEPROM.read(mem);
-    return 0;
+    byte data = EEPROM.read(mem);
+    return data;
+}
+
+int STATE::states()
+{
+    return state_count;
 }

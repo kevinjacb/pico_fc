@@ -12,6 +12,7 @@
     STATE :
         4 -> calibrating (steady blue)
         5 -> Starting(all lit)
+        6 -> ESC calibration procedure
 
 */
 /*

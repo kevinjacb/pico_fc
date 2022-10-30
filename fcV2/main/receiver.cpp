@@ -17,12 +17,18 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
     raw_elevator = pulseIn(receiver_pin[1], HIGH);
     raw_throttle = pulseIn(receiver_pin[2], HIGH);
     raw_rudder = pulseIn(receiver_pin[3], HIGH);
+    raw_mode = pulseIn(receiver_pin[4], HIGH);
 
     // Requires radio calibrated limits! TODO
     *aileron = map(raw_aileron, 1000, 2000, -max_pr, max_pr);
     *elevator = map(raw_elevator, 1000, 2000, -max_pr, max_pr);
     *throttle = map(raw_throttle, 1100, 1900, 1000, max_throttle);
     *rudder = map(raw_rudder, 1000, 2000, -max_yaw, max_yaw);
+
+    if (raw_mode > 1500 && raw_mode < 2050) // temporarily stores esc calibration modes
+        mode = 1;
+    else
+        mode = 0;
 
     if (millis() - elapsed > 1000)
     {
@@ -43,6 +49,7 @@ int RECEIVER::display()
     Serial.println("Elevator : " + String(raw_elevator));
     Serial.println("Throttle : " + String(raw_throttle));
     Serial.println("Rudder : " + String(raw_rudder));
+    Serial.println("Mode : " + String(raw_mode));
     return 0;
 }
 bool RECEIVER::armSequence()
@@ -63,4 +70,9 @@ bool RECEIVER::armSequence()
         arm_started = 0;
     }
     return false;
+}
+
+int RECEIVER::getMode()
+{
+    return mode;
 }
