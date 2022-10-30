@@ -9,8 +9,8 @@ private:
         state_count = 1;
 
 public:
-    int writeTo(int mem, byte data);
-    byte readFrom(int mem);
+    int writeTo(int offset, int data); // Effective offset = 4kb*offset from rear
+    byte readFrom(int offset);
     int states();
 };
 

@@ -16,7 +16,7 @@ IMU *mpu;
 PID *pid;
 CONTROL *control;
 RECEIVER *receiver;
-CHECKS *errorHandler = NULL;
+CHECKS *errorHandler;
 STATE *mem;
 // SoftwareSerial bl(BL_RX,BL_TX)
 
@@ -45,7 +45,7 @@ void setup()
     mem = new STATE();
     // pinMode(LED_BUILTIN, OUTPUT);
 
-    readStates();
+    // readStates();        //to be updated TODO
 
     initialized = true;
 
@@ -56,12 +56,12 @@ void loop()
 {
     errorHandler->blink(millis()); // makes sure the error is displayed
 
-    if (errorHandler->ok() == 1)
+    if (errorHandler->ok() == 1 || errorHandler->ok() == 6) // TODO
         return;
     if (receiver->getMode() == 1)
     {
-        if (errorHandler->ok() != 6)
-            mem->writeTo(0, 1);
+        // if (errorHandler->ok() != 6)
+        //     mem->writeTo(0, 1);
         errorHandler->setError(6, 1, false);
         return;
     }
@@ -115,7 +115,7 @@ void loop()
 
 void setup1()
 {
-    while (errorHandler == NULL)
+    while (!initialized)
         ;
     receiver = new RECEIVER(&errorHandler);
 }
@@ -124,6 +124,12 @@ void setup1()
 void loop1()
 {
 
+    if (errorHandler->ok() == 6)
+    {
+        control->turnOff(motor_output);
+        control->ESCCalibration();
+        errorHandler->setError(0, 1);
+    }
     errorHandler->blink(millis());
     receiver->readPWM(&aileron, &elevator, &throttle, &rudder);
     pidInp();
@@ -181,18 +187,20 @@ void initialize()
     Wire.begin();
 }
 
-void readStates() // INCOMPLETE TODO
-{
-    for (int i = 0; i < mem->states(); i++)
-    {
-        byte state = mem->readFrom(i);
-        if (i == 0 && state)
-        {
-            while (errorHandler->setError(6, 2, false))
-                ;
-            control->ESCCalibration();
-            errorHandler->setError(0, 2);
-        }
-        // mem->writeTo(i, 0); TO BE UNCOMMENTED
-    }
-}
+// to be updated        TODO
+//  void readStates() // INCOMPLETE TODO
+//  {
+//      for (int i = 0; i < mem->states(); i++)
+//      {
+//          // byte state = mem->readFrom(i);
+//          if (i == 0 && state)
+//          {
+//              Serial.println("time for calibration!");
+//              while (!errorHandler->setError(6, 2, false))
+//                  ;
+//              control->ESCCalibration();
+//              errorHandler->setError(0, 2);
+//              // mem->writeTo(i, 0); // TO BE UNCOMMENTED
+//          }
+//      }
+//  }

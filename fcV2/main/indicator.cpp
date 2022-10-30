@@ -56,6 +56,12 @@ bool CHECKS::setError(int c_state, int mx, bool done)
         state[0] = state[1] = state[2] = true;
         setStates();
         break;
+    case 6: // ESC calibration mode
+        state[1] = state[2] = true;
+        state[0] = false;
+        setStates();
+        delay_r = 100;
+        break;
     }
     error = c_state;
     if (done)

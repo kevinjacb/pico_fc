@@ -33,7 +33,16 @@ int CONTROL::ESCCalibration()
     for (int i = 0; i < 4; i++)
         pwm[i] = 2000;
     setSpeeds(pwm);
-    delay(2500);
+
+    // to be updated TODO
+    Serial.println("Unplug the escs and plug them in again.\nThen press any key to continue");
+    while (!Serial.available())
+        ;
+    Serial.println("Calibrating ....................."); // comment debug
+
+    long start = millis();
+    while (millis() - start < 2500)
+        ;
     turnOff(pwm);
     return 0;
 }
