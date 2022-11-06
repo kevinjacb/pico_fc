@@ -18,11 +18,13 @@ private:
 
     float curr_pitch, curr_roll, curr_yaw,
         prev_pitch, prev_roll, prev_yaw; // stores prev angle values
+    float p_offset = 0, r_offset = 0, y_offset = 0;
 
 public:
     IMU(CHECKS *errorHandler);
     int updateAngles();                                        // reads from imu
     int readAngles(float *pitch, float *roll, float *yaw);     // stores pitch roll yaw into the variables
     int readPrevAngles(float *pitch, float *roll, float *yaw); // stores prev angles
+    int setOffsets(float pitch, float roll, float yaw);
 };
 #endif

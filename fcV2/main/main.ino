@@ -9,8 +9,6 @@
 
 #define I2C_SDA 4
 #define I2C_SCL 5
-#define BL_TX 0
-#define BL_RX 1
 
 IMU *mpu;
 PID *pid;
@@ -24,12 +22,12 @@ bool initialized = false;
 
 // int channels[5] = {1000, 1000, 1000, 1000, 1000};
 int motor_output[4] = {1000, 1000, 1000, 1000};
-int throttle = 1000, aileron = 1000, elevator = 1000, rudder = 1000; // TODO set presets
+int throttle = 1000, aileron = 1500, elevator = 1500, rudder = 1500; // TODO set presets
 // int prev_led = 1000;
 // int state = 1;
 
-const int throttle_thresh = 1150,
-          arm_thresh = 1150;
+const int throttle_thresh = 1100,
+          arm_thresh = 1100;
 long arm_started = 0;
 
 void setup()
@@ -54,6 +52,7 @@ void setup()
 
 void loop()
 {
+    int start = millis();
     errorHandler->blink(millis()); // makes sure the error is displayed
 
     if (errorHandler->ok() == 1 || errorHandler->ok() == 6) // TODO
@@ -70,7 +69,6 @@ void loop()
     //     digitalWrite(LED_BUILTIN, (state = abs(state - 1)));
     //     prev_led = millis();
     // }
-    int start = millis();
     mpu->updateAngles();
 
     if (receiver->armSequence())
@@ -97,20 +95,23 @@ void loop()
         }
         else
         {
-            pid->calcPID(motor_output, throttle);
+            pid->calcPID(motor_output, throttle, -elevator, aileron, -rudder);
         }
     }
     else
         control->turnOff(motor_output);
 
-    float pitch, roll, yaw;
-    mpu->readAngles(&pitch, &roll, &yaw);
-    float arr[] = {pitch, roll, yaw};
+    // float pitch, roll, yaw;
+    // mpu->readAngles(&pitch, &roll, &yaw);
+
+    // float arr[] = {pitch, roll, yaw};
     // printInfo("Angles", arr, 3);
 
     control->setSpeeds(motor_output);
-    while (millis() - start < 10)
+    while (millis() - start < 5)
         ;
+
+    // Serial.println(millis() - start); // debug
 }
 
 void setup1()
@@ -133,8 +134,13 @@ void loop1()
     errorHandler->blink(millis());
     receiver->readPWM(&aileron, &elevator, &throttle, &rudder);
     pidInp();
+    float p, d;
+    receiver->getPIDValues(&p, &d);
+    pid->kp = p;
+    pid->kd = d;
+    // Serial.println(" PID p : " + String(p) + " PID d : " + String(d));
     printInfo("outputs", motor_output, 4); // remove
-    receiver->display();
+    // receiver->display();
     // printInfo("channels", channels, 5); // remove
 }
 
@@ -155,6 +161,15 @@ void pidInp()
             break;
         case 'd':
             pid->kd = val;
+            break;
+        case 'a':
+            pid->yaw_kp = val;
+            break;
+        case 'b':
+            pid->yaw_ki = val;
+            break;
+        case 'c':
+            pid->yaw_kd = val;
             break;
         }
         Serial.printf("val -> %f\n", val);
@@ -180,7 +195,6 @@ void printInfo(String label, float array[], int count)
 void initialize()
 {
     Serial.begin(115200);
-    Serial1.begin(115200);
     Wire.setSDA(I2C_SDA);
     Wire.setSCL(I2C_SCL);
     Wire.setClock(400000);

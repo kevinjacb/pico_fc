@@ -8,7 +8,10 @@ RECEIVER::RECEIVER(CHECKS **errorHandler)
     for (int i = 0; i < active_pins; i++)
         pinMode(receiver_pin[i], INPUT_PULLDOWN);
 }
-
+float mapFloat(float source, float fromLow, float fromHigh, float toLow, float toHigh)
+{
+    return ((source - fromLow) * ((toHigh - toLow) / (fromHigh - fromLow)) + toLow);
+}
 int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
 {
     long elapsed = millis();
@@ -18,6 +21,7 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
     raw_throttle = pulseIn(receiver_pin[2], HIGH);
     raw_rudder = pulseIn(receiver_pin[3], HIGH);
     raw_mode = pulseIn(receiver_pin[4], HIGH);
+    raw_dval = pulseIn(receiver_pin[5], HIGH);
 
     // Requires radio calibrated limits! TODO
     *aileron = map(raw_aileron, 1000, 2000, -max_pr, max_pr);
@@ -25,10 +29,16 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
     *throttle = map(raw_throttle, 1100, 1900, 1000, max_throttle);
     *rudder = map(raw_rudder, 1000, 2000, -max_yaw, max_yaw);
 
-    if (raw_mode > 1500 && raw_mode < 2050) // temporarily stores esc calibration modes
-        mode = 1;
-    else
-        mode = 0;
+    pid_pval = mapFloat(raw_mode, 1000.0f, 2000.0f, 0.00f, 5.00f),
+    pid_dval = mapFloat(raw_dval, 1000.0000f, 2000.0000f, 0.0000f, 1.000f);
+
+    // Serial.println("d val : " + String(pid_dval));
+    // if (raw_mode > 1500 && raw_mode < 2050) // temporarily stores esc calibration modes
+    //     mode = 1;
+    // else
+    //     mode = 0;
+
+    // raw mode use for pid tuning
 
     if (millis() - elapsed > 1000)
     {
@@ -75,4 +85,11 @@ bool RECEIVER::armSequence()
 int RECEIVER::getMode()
 {
     return mode;
+}
+
+int RECEIVER::getPIDValues(float *p, float *d)
+{
+    *p = pid_pval;
+    *d = pid_dval;
+    return 0;
 }

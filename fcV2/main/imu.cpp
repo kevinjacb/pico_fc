@@ -37,14 +37,20 @@ IMU::IMU(CHECKS *errorHandler)
         return;
     }
     errorHandler->setError(4, 0, false); // starts calibration
-
     mpu.calibrateAccelGyro();
-    mpu.calibrateMag();
+    // mpu.calibrateMag();
+    // mpu.selectFilter(QuatFilterSel::MAHONY);
+    // mpu.setFilterIterations(10);
+
+    for (int i = 0; i < 100; i++)
+    {
+        updateAngles();
+        delay(10);
+    }
+    readAngles(&prev_pitch, &prev_roll, &prev_yaw);
+    setOffsets(prev_pitch, prev_roll, prev_yaw);
 
     errorHandler->setError(0, 0);
-
-    updateAngles();
-    readAngles(&prev_pitch, &prev_roll, &prev_yaw);
 }
 
 int IMU::updateAngles()
@@ -54,9 +60,9 @@ int IMU::updateAngles()
     prev_yaw = curr_yaw;
     if (!mpu.update())
         return 1;
-    curr_pitch = mpu.getPitch();
-    curr_roll = mpu.getRoll();
-    curr_yaw = mpu.getYaw();
+    curr_pitch = mpu.getPitch() - p_offset;
+    curr_roll = mpu.getRoll() - r_offset;
+    curr_yaw = mpu.getYaw() - y_offset;
 
     return 0;
 }
@@ -75,5 +81,13 @@ int IMU::readPrevAngles(float *pitch, float *roll, float *yaw)
     *roll = prev_roll;
     *yaw = prev_yaw;
 
+    return 0;
+}
+
+int IMU::setOffsets(float pitch, float roll, float yaw)
+{
+    p_offset = pitch;
+    r_offset = roll;
+    y_offset = yaw;
     return 0;
 }
