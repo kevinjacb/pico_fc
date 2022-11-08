@@ -19,9 +19,9 @@ IMU::IMU(CHECKS *errorHandler)
     settings.gyro_dlpf_cfg = GYRO_DLPF_CFG::DLPF_20HZ;
     settings.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_21HZ;
 
-    long start_time = millis();
     while (!(errorHandler->setError(5, 0, false)))
         ;
+    long start_time = millis();
     while (!mpu.setup(ADDR, settings))
     {
         if (millis() - start_time > 10000)
@@ -37,18 +37,26 @@ IMU::IMU(CHECKS *errorHandler)
         return;
     }
     errorHandler->setError(4, 0, false); // starts calibration
+    mpu.verbose(true);
     mpu.calibrateAccelGyro();
     // mpu.calibrateMag();
     // mpu.selectFilter(QuatFilterSel::MAHONY);
     // mpu.setFilterIterations(10);
 
-    for (int i = 0; i < 100; i++)
-    {
-        updateAngles();
-        delay(10);
-    }
-    readAngles(&prev_pitch, &prev_roll, &prev_yaw);
-    setOffsets(prev_pitch, prev_roll, prev_yaw);
+    // FIX CALIBRATION
+    // float accBiasX = mpu.getAccBiasX() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY;
+    // float accBiasY = mpu.getAccBiasY() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY;
+    // float accBiasZ = mpu.getAccBiasZ() * 1000.f / (float)MPU9250::CALIB_ACCEL_SENSITIVITY;
+
+    // float gyroBiasX = mpu.getGyroBiasX() / (float)MPU9250::CALIB_GYRO_SENSITIVITY;
+    // float gyroBiasY = mpu.getGyroBiasY() / (float)MPU9250::CALIB_GYRO_SENSITIVITY;
+    // float gyroBiasZ = mpu.getGyroBiasZ() / (float)MPU9250::CALIB_GYRO_SENSITIVITY;
+
+    // mpu.setAccBias(accBiasX, accBiasY, accBiasZ);
+    // mpu.setGyroBias(gyroBiasX, gyroBiasY, gyroBiasZ);
+    // mpu.setAccBias(1208.98, -326.24, 958.44);
+    // mpu.setGyroBias(52.78, 304.63, 119.85);
+    mpu.verbose(false);
 
     errorHandler->setError(0, 0);
 }
@@ -63,7 +71,6 @@ int IMU::updateAngles()
     curr_pitch = mpu.getPitch() - p_offset;
     curr_roll = mpu.getRoll() - r_offset;
     curr_yaw = mpu.getYaw() - y_offset;
-
     return 0;
 }
 
@@ -84,10 +91,20 @@ int IMU::readPrevAngles(float *pitch, float *roll, float *yaw)
     return 0;
 }
 
-int IMU::setOffsets(float pitch, float roll, float yaw)
+int IMU::setOffsets()
 {
-    p_offset = pitch;
-    r_offset = roll;
-    y_offset = yaw;
+    for (int i = 0; i < 1000; i++)
+    {
+        float p, r, y;
+        updateAngles();
+        readAngles(&p, &r, &y);
+        p_offset += p;
+        r_offset += r;
+        y_offset += y;
+        delay(5);
+    }
+    p_offset /= 1000;
+    r_offset /= 1000;
+    y_offset /= 1000;
     return 0;
 }

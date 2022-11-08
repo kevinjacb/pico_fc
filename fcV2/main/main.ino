@@ -1,6 +1,7 @@
 // #include <Arduino.h>
 #include "pid.h"
 #include "receiver.h"
+// #include "imu2.h"
 #include "imu.h"
 #include "output.h"
 #include "indicator.h"
@@ -11,6 +12,7 @@
 #define I2C_SCL 5
 
 IMU *mpu;
+// IMU2 *mpu;
 PID *pid;
 CONTROL *control;
 RECEIVER *receiver;
@@ -37,6 +39,7 @@ void setup()
     throttle = aileron = elevator = rudder = 1000;
     initialize();
     errorHandler = new CHECKS();
+    // mpu = new IMU2(errorHandler);
     mpu = new IMU(errorHandler);
     pid = new PID(mpu);
     control = new CONTROL();
