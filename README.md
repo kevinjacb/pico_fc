@@ -5,11 +5,9 @@
 ## Latest: fcV2
 
 ##💥 Updates 💥: 
-![plot](vid1.mp4)
+![Watch!](vid1.mp4)
 ![plot](img1.jpg)
 ![plot](img2.jpg)
-![](img4.jpg = 2016x980)
-![](img6.jpg = 2016x980)
 
 ## Connections:
 
