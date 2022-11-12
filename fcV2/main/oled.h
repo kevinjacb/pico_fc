@@ -14,7 +14,7 @@
 class OLED
 {
 private:
-    Adafruit_SSD1306 display;
+    Adafruit_SSD1306 display = Adafruit_SSD1306(WIDTH, HEIGHT, &Wire, OLED_RST);
     bool initialized = true;
 
     /* LEVELS IN DISPLAY:
@@ -34,10 +34,11 @@ private:
 public:
     int mid_h = HEIGHT / 2, mid_w = WIDTH / 2;
 
-    OLED(TwoWire *wire);
+    OLED();
     int update();
     int setText(String data, int type); // data along with the type of message
     int setText(String data, int x, int y, int txt_size = 1);
+    int clearLine(int cursor_height);
     int clear();
 };
 

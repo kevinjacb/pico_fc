@@ -34,6 +34,9 @@ int throttle = 1000, aileron = 1500, elevator = 1500, rudder = 1500; // TODO set
 // int state = 1;
 
 int last_err = -1;
+float curr_volt = 0;
+long last_volt = 0;
+
 const int throttle_thresh = 1100,
           arm_thresh = 1100;
 long arm_started = 0;
@@ -51,10 +54,11 @@ void setup()
     control = new CONTROL();
     mem = new STATE();
     vmonitor = new VOLTAGE(true);
-    screen = new OLED(&Wire);
+    screen = new OLED();
 
-    screen->setText("Enabled", 4); // TODO hardcoded atm
-    screen->setText("Unavailable", 5);
+    screen->setText("Enabled", 3); // TODO hardcoded atm
+    screen->setText("Unavailable", 4);
+    screen->update();
 
     // pinMode(LED_BUILTIN, OUTPUT);
 
@@ -70,6 +74,8 @@ void loop()
     int start = millis();
     errorHandler->blink(millis()); // makes sure the error is displayed
 
+    curr_volt += vmonitor->measure_voltage();
+
     if (Serial.available())
     {
         String data = Serial.readString();
@@ -84,16 +90,24 @@ void loop()
             halt = false;
         }
     }
-    if (last_err != errorHandler->ok())
+
+    if (millis() - last_volt > 200)
     {
+        last_volt = millis();
+        screen->clearLine(10);
+        screen->setText("Batt: " + String(curr_volt / 40), 1, 10);
+        curr_volt = 0;
+    }
+
+    if (last_err != (errorHandler->ok()))
+    {
+        screen->setText("Failed", 2);
         last_err = errorHandler->ok();
         switch (last_err)
         {
-        case -1:
-            screen->setText("Failed", 3);
         case 0:
             screen->setText("None", 0);
-            screen->setText("Cleared", 3);
+            screen->setText("Cleared", 2);
             break;
         case 1:
             screen->setText("IMU ERR!", 0);
@@ -105,6 +119,7 @@ void loop()
             screen->setText("Calibration required", 0);
             break;
         }
+        screen->update();
     }
     if (errorHandler->ok() == 1 || errorHandler->ok() == 6) // TODO
         return;
@@ -163,7 +178,7 @@ void loop()
     while (millis() - start < 5)
         ;
 
-    // Serial.println(millis() - start); // debug
+    Serial.println(millis() - start); // debug
 }
 
 void setup1()

@@ -4,9 +4,8 @@
 #include <Adafruit_SSD1306.h>
 #include "oled.h"
 
-OLED::OLED(TwoWire *wire)
+OLED::OLED()
 {
-    display = Adafruit_SSD1306(WIDTH, HEIGHT, wire, OLED_RST);
     int start = millis(); // for delay
     if (!display.begin(SSD1306_SWITCHCAPVCC, DISP_ADDR))
         initialized = false;
@@ -17,6 +16,7 @@ OLED::OLED(TwoWire *wire)
 
 int OLED::update()
 {
+    display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
     for (int i = 0; i < type_count; i++)
@@ -31,7 +31,12 @@ int OLED::update()
 int OLED::setText(String data, int type)
 {
     curr_data[type] = data;
-    update();
+    return 0;
+}
+
+int OLED::clearLine(int cursor_height)
+{
+    display.fillRect(0, cursor_height, WIDTH, 8, SSD1306_BLACK);
     return 0;
 }
 
