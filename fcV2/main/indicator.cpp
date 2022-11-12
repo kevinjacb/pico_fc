@@ -62,6 +62,11 @@ bool CHECKS::setError(int c_state, int mx, bool done)
         setStates();
         delay_r = 100;
         break;
+    case 7:
+        state[0] = state[2] = true;
+        state[1] = false;
+        setStates();
+        break;
     }
     error = c_state;
     if (done)

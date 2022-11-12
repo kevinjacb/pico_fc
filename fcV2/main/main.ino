@@ -6,6 +6,7 @@
 #include "output.h"
 #include "indicator.h"
 #include "eeprom.h"
+#include "voltage_meter.h"
 // #include <SoftwareSerial.h>
 
 #define I2C_SDA 4
@@ -18,9 +19,11 @@ CONTROL *control;
 RECEIVER *receiver;
 CHECKS *errorHandler;
 STATE *mem;
+VOLTAGE *vmonitor;
 // SoftwareSerial bl(BL_RX,BL_TX)
 
-bool initialized = false;
+bool initialized = false,
+     halt = false;
 
 // int channels[5] = {1000, 1000, 1000, 1000, 1000};
 int motor_output[4] = {1000, 1000, 1000, 1000};
@@ -44,6 +47,7 @@ void setup()
     pid = new PID(mpu);
     control = new CONTROL();
     mem = new STATE();
+    vmonitor = new VOLTAGE(true);
     // pinMode(LED_BUILTIN, OUTPUT);
 
     // readStates();        //to be updated TODO
@@ -58,20 +62,29 @@ void loop()
     int start = millis();
     errorHandler->blink(millis()); // makes sure the error is displayed
 
+    if (Serial.available())
+    {
+        String data = Serial.readString();
+        if (data.equalsIgnoreCase("calibrate"))
+        {
+            while (!errorHandler->setError(7, 3, false))
+                ;
+            halt = true;
+            vmonitor->calibrate();
+            errorHandler->setError(0, 3);
+        }
+    }
+
     if (errorHandler->ok() == 1 || errorHandler->ok() == 6) // TODO
         return;
     if (receiver->getMode() == 1)
     {
-        // if (errorHandler->ok() != 6)
-        //     mem->writeTo(0, 1);
         errorHandler->setError(6, 1, false);
         return;
     }
-    // if (millis() - prev_led > 1000)
-    // {
-    //     digitalWrite(LED_BUILTIN, (state = abs(state - 1)));
-    //     prev_led = millis();
-    // }
+
+    // Calibration check:
+
     mpu->updateAngles();
 
     if (receiver->armSequence())
@@ -130,6 +143,11 @@ void setup1()
 void loop1()
 {
 
+    if (halt)
+    {
+        control->turnOff(motor_output);
+        return;
+    }
     if (errorHandler->ok() == 6)
     {
         control->turnOff(motor_output);

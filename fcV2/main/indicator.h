@@ -13,6 +13,7 @@
         4 -> calibrating (steady blue)
         5 -> Starting(all lit)
         6 -> ESC calibration procedure (red(blink) and green)
+        7 -> Other calibration (blue) and (red) steady
 
 */
 /*
@@ -24,6 +25,7 @@
         0 -> imu
         1 -> receiver
         2 -> control
+        3 -> voltage
         */
 
 class CHECKS
