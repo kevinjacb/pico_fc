@@ -102,8 +102,10 @@ void loop()
         }
     }
     else
+    {
+        pid->reset();
         control->turnOff(motor_output);
-
+    }
     // float pitch, roll, yaw;
     // mpu->readAngles(&pitch, &roll, &yaw);
 
@@ -142,7 +144,7 @@ void loop1()
     pid->kp = p;
     pid->kd = d;
     // Serial.println(" PID p : " + String(p) + " PID d : " + String(d));
-    printInfo("outputs", motor_output, 4); // remove
+    // printInfo("outputs", motor_output, 4); // remove
     // receiver->display();
     // printInfo("channels", channels, 5); // remove
 }

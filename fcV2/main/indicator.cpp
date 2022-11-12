@@ -74,7 +74,7 @@ void CHECKS::blink(long c_time)
     // Serial.println(delay_b); // debug
     if ((c_time - p_time[0]) > delay_b && delay_b)
     {
-        Serial.println("Accessing blue"); // debug
+        // Serial.println("Accessing blue"); // debug
         state[0] = !state[0];
         p_time[0] = c_time;
     }

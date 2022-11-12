@@ -38,7 +38,11 @@ IMU::IMU(CHECKS *errorHandler)
     }
     errorHandler->setError(4, 0, false); // starts calibration
     mpu.verbose(true);
-    mpu.calibrateAccelGyro();
+
+    // Serial.println("Calibrating the gyro");
+    // mpu.calibrateAccelGyro();
+    // Serial.println("Calibrating mag in 5 secs");
+    // delay(5000);
     // mpu.calibrateMag();
     // mpu.selectFilter(QuatFilterSel::MAHONY);
     // mpu.setFilterIterations(10);
@@ -54,8 +58,16 @@ IMU::IMU(CHECKS *errorHandler)
 
     // mpu.setAccBias(accBiasX, accBiasY, accBiasZ);
     // mpu.setGyroBias(gyroBiasX, gyroBiasY, gyroBiasZ);
-    // mpu.setAccBias(1208.98, -326.24, 958.44);
-    // mpu.setGyroBias(52.78, 304.63, 119.85);
+
+    // old values :
+    //  mpu.setAccBias(849.76, -561.07, 1025.07);
+    //  mpu.setGyroBias(39.98, 294.41, 113.59);
+    //  mpu.setMagBias(-122.43, 110.35, 81.37);
+
+    mpu.setAccBias(753.27, -446.93, 1055.02);
+    mpu.setGyroBias(41.95, 303.32, 113.12);
+    mpu.setMagBias(184.57, 336.55, 24.76);
+
     mpu.verbose(false);
 
     errorHandler->setError(0, 0);
@@ -91,6 +103,7 @@ int IMU::readPrevAngles(float *pitch, float *roll, float *yaw)
     return 0;
 }
 
+// not used
 int IMU::setOffsets()
 {
     for (int i = 0; i < 1000; i++)

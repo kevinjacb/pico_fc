@@ -61,8 +61,8 @@ int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desir
 
     yaw_p = yaw_kp * yaw_error;
     yaw_d = yaw_kd * (yaw_error - prev_yaw_error) / sampleRate;
-    if (abs(yaw_error) < integral_angle)
-        yaw_i += yaw_error * yaw_ki;
+    // if (abs(yaw_error) < integral_angle) // TO BE UNCOMMENTED
+    //     yaw_i += yaw_error * yaw_ki;
     yaw_i = constrain(yaw_i, -integral_limit, integral_limit);
     prev_yaw_error = yaw_error;
     yaw_pid = yaw_p + yaw_d + yaw_i;
@@ -83,14 +83,38 @@ int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desir
     pwm[2] = constrain(throttle + constrain(pitch_pid - roll_pid - yaw_pid, -pid_limit, pid_limit), 1000, 2000);
     pwm[1] = constrain(throttle + constrain(-pitch_pid - roll_pid + yaw_pid, -pid_limit, pid_limit), 1000, 2000);
     pwm[0] = constrain(throttle + constrain(-pitch_pid + roll_pid - yaw_pid, -pid_limit, pid_limit), 1000, 2000);
+
     if (millis() - lastSent > 40) // debugging
     {
         lastSent = millis();
         // Serial1.println("pitch error : " + String(pitch_error) + " pid: " + String(pitch_pid) + " p: " + String(pitch_p) + " d: " + String(pitch_d) + " i: " + String(pitch_i));
-        Serial1.println("m1: " + String(pwm[0]) + " m2: " + String(pwm[1]) + " m3: " + String(pwm[2]) + " m4: " + String(pwm[3]));
-        Serial.println("pitch error : " + String(pitch_error) + " pid: " + String(pitch_pid) + " p: " + String(pitch_p) + " d: " + String(pitch_d) + " i: " + String(pitch_i));
-        Serial.println("roll error : " + String(roll_error) + " pid: " + String(roll_pid) + " p: " + String(roll_p) + " d: " + String(roll_d) + " i: " + String(roll_i));
+        // Serial.println("m1: " + String(pwm[0]) + " m2: " + String(pwm[1]) + " m3: " + String(pwm[2]) + " m4: " + String(pwm[3]));
+        Serial1.println("pitch error : " + String(pitch_error) + " pid: " + String(pitch_pid) + " p: " + String(pitch_p) + " d: " + String(pitch_d) + " i: " + String(pitch_i));
+        Serial1.println("roll error : " + String(roll_error) + " pid: " + String(roll_pid) + " p: " + String(roll_p) + " d: " + String(roll_d) + " i: " + String(roll_i));
+        // Serial.println("pitch error : " + String(pitch_error) + " pid: " + String(pitch_pid) + " p: " + String(pitch_p) + " d: " + String(pitch_d) + " i: " + String(pitch_i));
+        // Serial.println("roll error : " + String(roll_error) + " pid: " + String(roll_pid) + " p: " + String(roll_p) + " d: " + String(roll_d) + " i: " + String(roll_i));
         // Serial1.println("pitch error : " + String(pitch_error) + " pid: " + String(pitch_pid) + " p: " + String(pitch_p) + " d: " + String(pitch_d) + " i: " + String(pitch_i)); // debug
     }
+    return 0;
+}
+
+int PID::reset()
+{ // reset all variables on throttle off
+    pitch = 0;
+    yaw = 0;
+    roll = 0;
+
+    prev_desired_pitch = 0;
+    prev_desired_roll = 0;
+
+    prev_yaw = 0;
+    prev_yaw_error = 0;
+    prev_pitch = 0;
+    prev_roll = 0;
+
+    roll_i = 0;
+    pitch_i = 0;
+    yaw_i = 0;
+
     return 0;
 }

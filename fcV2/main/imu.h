@@ -18,7 +18,7 @@ private:
 
     float curr_pitch = 0, curr_roll = 0, curr_yaw = 0,
           prev_pitch = 0, prev_roll = 0, prev_yaw = 0; // stores prev angle values
-    float p_offset = 12, r_offset = 0, y_offset = 0;
+    float p_offset = 0, r_offset = 0, y_offset = 0;
 
 public:
     IMU(CHECKS *errorHandler);
