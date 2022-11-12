@@ -5,7 +5,9 @@
 ## Latest: fcV2
 
 ##💥 Updates 💥: 
-![Watch!](vid1.mp4)
+
+![Update Video](https://github.com/kevinjacb/pico_fc/blob/main/vid1.mp4)
+
 ![plot](img1.jpg)
 ![plot](img2.jpg)
 
