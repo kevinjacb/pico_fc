@@ -7,6 +7,7 @@
 #include "indicator.h"
 #include "eeprom.h"
 #include "voltage_meter.h"
+#include "oled.h"
 // #include <SoftwareSerial.h>
 
 #define I2C_SDA 4
@@ -20,6 +21,7 @@ RECEIVER *receiver;
 CHECKS *errorHandler;
 STATE *mem;
 VOLTAGE *vmonitor;
+OLED *screen;
 // SoftwareSerial bl(BL_RX,BL_TX)
 
 bool initialized = false,
@@ -31,6 +33,7 @@ int throttle = 1000, aileron = 1500, elevator = 1500, rudder = 1500; // TODO set
 // int prev_led = 1000;
 // int state = 1;
 
+int last_err = -1;
 const int throttle_thresh = 1100,
           arm_thresh = 1100;
 long arm_started = 0;
@@ -48,6 +51,11 @@ void setup()
     control = new CONTROL();
     mem = new STATE();
     vmonitor = new VOLTAGE(true);
+    screen = new OLED(&Wire);
+
+    screen->setText("Enabled", 4); // TODO hardcoded atm
+    screen->setText("Unavailable", 5);
+
     // pinMode(LED_BUILTIN, OUTPUT);
 
     // readStates();        //to be updated TODO
@@ -76,7 +84,28 @@ void loop()
             halt = false;
         }
     }
-
+    if (last_err != errorHandler->ok())
+    {
+        last_err = errorHandler->ok();
+        switch (last_err)
+        {
+        case -1:
+            screen->setText("Failed", 3);
+        case 0:
+            screen->setText("None", 0);
+            screen->setText("Cleared", 3);
+            break;
+        case 1:
+            screen->setText("IMU ERR!", 0);
+            break;
+        case 2:
+            screen->setText("no RX sig", 0);
+            break;
+        case 3:
+            screen->setText("Calibration required", 0);
+            break;
+        }
+    }
     if (errorHandler->ok() == 1 || errorHandler->ok() == 6) // TODO
         return;
     if (receiver->getMode() == 1)
@@ -97,6 +126,8 @@ void loop()
         errorHandler->setError(5, 2);
         if (!arm_started)
             arm_started = millis();
+        screen->clear();
+        screen->setText(">>>> ARMED <<<<", screen->mid_h, 10);
         // pid->calcPID(motor_output, throttle,aileron,elevator,rudder);
         // while pid testing *remove
     }
@@ -109,6 +140,7 @@ void loop()
             {
                 arm_started = 0;
                 control->turnOff(motor_output);
+                screen->clear();
             }
         }
         else
