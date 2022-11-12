@@ -48,6 +48,14 @@ ESC OUTS(current):
   GPIO 16 -> MOTOR 4
 ```
 
+OLED:
+```
+  GPIO 4 -> SDA
+  GPIO 5 -> SCL
+  VCC -> 3V3
+  GND -> GND
+```
+
 GPS (TO BE ADDED):
 ```
   3V3 -> VCC
