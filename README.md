@@ -8,8 +8,8 @@
 ![plot](vid1.mp4)
 ![plot](img1.jpg)
 ![plot](img2.jpg)
-![plot](img3.jpg)
-![plot](img4.jpg)
+![plot](img4.jpg = 2016x980)
+![plot](img6.jpg = 2016x980)
 
 ## Connections:
 
