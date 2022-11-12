@@ -65,13 +65,15 @@ void loop()
     if (Serial.available())
     {
         String data = Serial.readString();
-        if (data.equalsIgnoreCase("calibrate"))
+        // Serial.println(data); // debug
+        if (!data.equalsIgnoreCase("calibrate"))
         {
             while (!errorHandler->setError(7, 3, false))
                 ;
             halt = true;
             vmonitor->calibrate();
             errorHandler->setError(0, 3);
+            halt = false;
         }
     }
 
