@@ -4,6 +4,13 @@
 
 ## Latest: fcV2
 
+##💥 Updates 💥: 
+![plot](vid1.mp4)
+![plot](img1.jpg)
+![plot](img2.jpg)
+![plot](img3.jpg)
+![plot](img4.jpg)
+
 ## Connections:
 
 ### *RPI PICO -> COMPONENTS*
