@@ -21,7 +21,8 @@ RECEIVER *receiver;
 CHECKS *errorHandler;
 STATE *mem;
 VOLTAGE *vmonitor;
-OLED *screen;
+// OLED *screen;
+OLED2 *screen;
 // SoftwareSerial bl(BL_RX,BL_TX)
 
 bool initialized = false,
@@ -35,11 +36,12 @@ int throttle = 1000, aileron = 1500, elevator = 1500, rudder = 1500; // TODO set
 
 int last_err = -1;
 float curr_volt = 0;
-long last_volt = 0;
-
+long last_volt = 0,
+     last_pid = 0;
 const int throttle_thresh = 1100,
           arm_thresh = 1100;
 long arm_started = 0;
+int start = 0;
 
 void setup()
 {
@@ -54,7 +56,8 @@ void setup()
     control = new CONTROL();
     mem = new STATE();
     vmonitor = new VOLTAGE(true);
-    screen = new OLED();
+    // screen = new OLED();
+    screen = new OLED2();
 
     screen->setText("Enabled", 3); // TODO hardcoded atm
     screen->setText("Unavailable", 4);
@@ -71,7 +74,6 @@ void setup()
 
 void loop()
 {
-    int start = millis();
     errorHandler->blink(millis()); // makes sure the error is displayed
 
     curr_volt += vmonitor->measure_voltage();
@@ -91,11 +93,10 @@ void loop()
         }
     }
 
-    if (millis() - last_volt > 200)
+    if (millis() - last_volt > 500)
     {
         last_volt = millis();
-        screen->clearLine(10);
-        screen->setText("Batt: " + String(curr_volt / 40), 1, 10);
+        screen->setText("Batt: " + String(curr_volt / 100) + "V", 1, 2); // 2 -> 10 in OLED
         curr_volt = 0;
     }
 
@@ -160,7 +161,12 @@ void loop()
         }
         else
         {
+            while (millis() - start < 5)
+                ;
             pid->calcPID(motor_output, throttle, -elevator, aileron, -rudder);
+            start = millis();
+            // Serial.println("Sample Rate: " + String(millis() - last_pid)); // debug DELETE
+            // last_pid = millis();
         }
     }
     else
@@ -175,10 +181,8 @@ void loop()
     // printInfo("Angles", arr, 3);
 
     control->setSpeeds(motor_output);
-    while (millis() - start < 5)
-        ;
 
-    Serial.println(millis() - start); // debug
+    // Serial.println(millis() - start); // debug
 }
 
 void setup1()

@@ -19,10 +19,11 @@ PID::PID(IMU *mpu)
 
 int lastSent = 0;
 // calculates and adds the pids to motor values
-int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desired_roll_angle, float desired_yaw)
+int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desired_roll_angle, float desired_yaw, long dlay)
 {
     // int *pwm_copy = pwm;
 
+    // sampleRate = dlay / 1000; // can be commented
     mpu->readAngles(&pitch, &roll, &yaw);
     mpu->readPrevAngles(&prev_pitch, &prev_roll, &prev_yaw);
 
@@ -44,6 +45,9 @@ int PID::calcPID(int pwm[], int throttle, float desired_pitch_angle, float desir
     //     roll_d = kd * (roll - prev_roll) / sampleRate;
     //     mpu->readPrevAngles(&prev_pitch, &prev_roll, &prev_yaw);
     // }
+
+    if (kp < 0.1) // while tuning, to be removed.
+        ki = 0;
 
     pitch_p = kp * pitch_error;
     pitch_d = kd * (pitch_error - (prev_pitch - prev_desired_pitch)) / sampleRate;

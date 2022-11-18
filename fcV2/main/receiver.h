@@ -14,9 +14,9 @@ private:
     int raw_aileron = 0, raw_elevator = 0, raw_throttle = 0, raw_rudder = 0, raw_mode = 0, raw_dval = 0;
     int aileron = 0, elevator = 0, throttle = 0, rudder = 0, mode = 0;
     float pid_pval = 0, pid_dval = 0;
-    const int max_throttle = 1500,
-              max_pr = 40,
-              max_yaw = 40;
+    const int max_throttle = 1700, // to be changed after tuning
+        max_pr = 25,
+              max_yaw = 25;
 
 public:
     RECEIVER(CHECKS **errorHandler);

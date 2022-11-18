@@ -12,7 +12,7 @@ private:
     bool active;
     float diode_offset = 0.146; // put your diode offset value here, set it to 0 if no diode(not recommended)
     float raw_value, output_voltage;
-    float calcd_voltage_divider = 6.17; // run the calibrate() to get these values
+    float calcd_voltage_divider = 6.8; // run the calibrate() to get these values
     // Used divider: 100kOhms and 15kOhms
 
 public:
