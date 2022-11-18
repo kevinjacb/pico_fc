@@ -4,6 +4,13 @@
 
 ## Latest: fcV2
 
+##💥 Updates 💥: 
+
+![Update Video](https://github.com/kevinjacb/pico_fc/blob/main/vid1.mp4)
+
+![plot](img1.jpg)
+![plot](img2.jpg)
+
 ## Connections:
 
 ### *RPI PICO -> COMPONENTS*
@@ -39,6 +46,14 @@ ESC OUTS(current):
   GPIO 19 -> MOTOR 2
   GPIO 17 -> MOTOR 3
   GPIO 16 -> MOTOR 4
+```
+
+OLED:
+```
+  GPIO 4 -> SDA
+  GPIO 5 -> SCL
+  VCC -> 3V3
+  GND -> GND
 ```
 
 GPS (TO BE ADDED):
