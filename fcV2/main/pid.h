@@ -11,9 +11,9 @@ class PID
 private:
     // IMU *mpu;
     IMU *mpu;
-    float sampleRate = 0.005;
+    float sampleRate = 0.01; // testing without the time component
     const float pid_limit = 400.0,
-                integral_limit = 80.0,
+                integral_limit = 100.0,
                 integral_angle = 25;
     long start = 0;
     // long last = 0; // debug
@@ -26,13 +26,13 @@ private:
 
     float pitch_error, roll_error, yaw_error,
         prev_yaw_error = 0,
-        prev_desired_pitch = 0,
-        prev_desired_roll = 0,
+        prev_pitch_err = 0,
+        prev_roll_err = 0,
         pitch_pid, roll_pid, yaw_pid;
 
 public:
-    float kp = 1.5, kd = 0.4, ki = 0.005,
-          yaw_kp = 10.0, yaw_kd = 0.0, yaw_ki = 0.01;
+    float kp = 0.0, kd = 0.0, ki = 0.0,
+          yaw_kp = 1, yaw_kd = 0.0, yaw_ki = 0.001;
     PID(IMU *mpu);
     int calcPID(int pwm[], int throttle = 0, float desired_pitch_angle = 0.0, float desired_roll_angle = 0.0, float desired_yaw = 0.0, long dlay = 0.005);
     int reset();

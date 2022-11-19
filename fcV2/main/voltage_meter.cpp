@@ -26,7 +26,7 @@ float VOLTAGE::measure_voltage() // measured -> in 20v range
     if (!active)
         return 4.2 * cell_count;
     raw_value = analogRead(volt_pin);
-    output_voltage = (raw_value * (3.3 / 1023)) * calcd_voltage_divider + diode_offset; // not 4093??
+    output_voltage = (raw_value * (3.3 / 1024)) * calcd_voltage_divider + diode_offset; // not 4093??
     return output_voltage;
 }
 

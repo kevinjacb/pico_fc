@@ -82,7 +82,7 @@ int IMU::updateAngles()
         return 1;
     curr_pitch = mpu.getPitch() - p_offset;
     curr_roll = mpu.getRoll() - r_offset;
-    curr_yaw = mpu.getYaw() - y_offset;
+    curr_yaw = mpu.getGyroZ();
     return 0;
 }
 

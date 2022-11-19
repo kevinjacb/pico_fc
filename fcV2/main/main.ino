@@ -34,7 +34,8 @@ int throttle = 1000, aileron = 1500, elevator = 1500, rudder = 1500; // TODO set
 // int prev_led = 1000;
 // int state = 1;
 
-int last_err = -1;
+int last_err = -1,
+    v_counter = 0;
 float curr_volt = 0;
 long last_volt = 0,
      last_pid = 0;
@@ -59,8 +60,7 @@ void setup()
     // screen = new OLED();
     screen = new OLED2();
 
-    screen->setText("Enabled", 3); // TODO hardcoded atm
-    screen->setText("Unavailable", 4);
+    screen->setText("Unavailable", 3); // temporary gps status
     screen->update();
 
     // pinMode(LED_BUILTIN, OUTPUT);
@@ -77,7 +77,7 @@ void loop()
     errorHandler->blink(millis()); // makes sure the error is displayed
 
     curr_volt += vmonitor->measure_voltage();
-
+    v_counter++;
     if (Serial.available())
     {
         String data = Serial.readString();
@@ -86,6 +86,7 @@ void loop()
         {
             while (!errorHandler->setError(7, 3, false))
                 ;
+            screen->setText("Calibrating", 30, 60);
             halt = true;
             vmonitor->calibrate();
             errorHandler->setError(0, 3);
@@ -96,8 +97,9 @@ void loop()
     if (millis() - last_volt > 500)
     {
         last_volt = millis();
-        screen->setText("Batt: " + String(curr_volt / 100) + "V", 1, 2); // 2 -> 10 in OLED
+        screen->setText("Batt: " + String(curr_volt / v_counter) + "V", 1, 2); // 2 -> 10 in OLED
         curr_volt = 0;
+        v_counter = 0;
     }
 
     if (last_err != (errorHandler->ok()))
@@ -161,7 +163,7 @@ void loop()
         }
         else
         {
-            while (millis() - start < 5)
+            while (millis() - start < 10)
                 ;
             pid->calcPID(motor_output, throttle, -elevator, aileron, -rudder);
             start = millis();

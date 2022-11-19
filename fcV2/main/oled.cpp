@@ -68,7 +68,7 @@ OLED2::OLED2()
     display.begin(&Adafruit128x64, DISP_ADDR, OLED_RST);
 #endif
 
-    display.setFont(Callibri11);
+    display.setFont(Stang5x7);
     display.clear();
     display.setCursor(15, 3);
     display.set2X();
@@ -77,7 +77,7 @@ OLED2::OLED2()
     while (millis() - start < 2000)
         ; // delay
     display.set1X();
-    display.setRow(10);
+    display.setRow(8);
     display.clear();
 }
 
@@ -106,6 +106,7 @@ int OLED2::setText(String data, int type)
 
 int OLED2::setText(String data, int x, int y, int txt_size)
 {
+    clear();
     display.setCursor(x, y);
     display.print(data);
     return 0;

@@ -24,13 +24,20 @@ int RECEIVER::readPWM(int *aileron, int *elevator, int *throttle, int *rudder)
     raw_dval = pulseIn(receiver_pin[5], HIGH);
 
     // Requires radio calibrated limits! TODO
+    if (raw_aileron > 1470 && raw_aileron < 1530)
+        raw_aileron = 1500;
+    if (raw_elevator > 1470 && raw_elevator < 1530)
+        raw_elevator = 1500;
+    if (raw_rudder > 1470 && raw_rudder < 1530)
+        raw_rudder = 1500;
+
     *aileron = map(raw_aileron, 1000, 2000, -max_pr, max_pr);
     *elevator = map(raw_elevator, 1000, 2000, -max_pr, max_pr);
     *throttle = map(raw_throttle, 1100, 1900, 1000, max_throttle);
     *rudder = map(raw_rudder, 1000, 2000, -max_yaw, max_yaw);
 
-    pid_pval = mapFloat(raw_mode, 1000.0f, 2000.0f, 0.00f, 5.00f),
-    pid_dval = mapFloat(raw_dval, 1000.0000f, 2000.0000f, 0.0000f, 1.000f);
+    pid_pval = mapFloat(raw_mode, 1000.0f, 2000.0f, 0.00f, 10.00f),
+    pid_dval = mapFloat(raw_dval, 1000.0000f, 2000.0000f, 0.0000f, 5.000f);
 
     // Serial.println("d val : " + String(pid_dval));
     // if (raw_mode > 1500 && raw_mode < 2050) // temporarily stores esc calibration modes

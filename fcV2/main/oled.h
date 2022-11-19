@@ -38,7 +38,7 @@ private:
     static const int type_count = 5;
     String types[type_count] = {"Err: ", "Batt: ", "Prearm: ", "BL: ", "GPS: "};
     String curr_data[type_count] = {"-", "-", "-", "-", "-"};
-    int ordinates[type_count][2] = {{1, 1}, {1, 10}, {1, 20}, {1, 30}, {1, 40}};
+    int ordinates[type_count][2] = {{1, 1}, {1, 8}, {1, 16}, {1, 24}, {1, 32}};
     int spacing = HEIGHT / type_count;
 
 public:
@@ -66,9 +66,9 @@ private:
         5. GPS(planned)
 
     */
-    static const int type_count = 5;
+    static const int type_count = 4;
     String types[type_count] = {"Err: ", "Batt: ", "Prearm: ", "GPS: "};
-    String curr_data[type_count] = {"-", "-", "-", "-", "-"};
+    String curr_data[type_count] = {"-", "-", "-", "-"};
     int ordinates[type_count][2] = {{1, 0}, {1, 2}, {1, 4}, {1, 6}};
     int spacing = HEIGHT / type_count;
 
